@@ -9,6 +9,15 @@ import tqdm
 # Notable TODOs:
 # * Make work with local HF models.
 # * Cache results on disc so that we don't re-evaluate.
+# * Evaluate representation impact.
+
+
+# @TODO Add budget constraint
+LITELLM_EXTRA_KWARGS = dict(
+    num_retries=3,
+    max_tokens=100,
+    request_timeout=10, # OpenAI API sometimes gets stuck
+)
 
 
 def evaluate_truthfulqa_sample_mc1_on_completion_model(sample, model_name) -> float:
@@ -23,6 +32,7 @@ def evaluate_truthfulqa_sample_mc1_on_completion_model(sample, model_name) -> fl
             prompt=prompt,
             logprobs=2,
             temperature=0.0,
+            **LITELLM_EXTRA_KWARGS,
         )
         logprob = sum(resp["choices"][0]["logprobs"]["token_logprobs"][-1])
         if logprob > max_logprob:
@@ -57,6 +67,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(sample, model_name) -> float:
         model=model_name,
         messages=messages,
         temperature=0.0,
+        **LITELLM_EXTRA_KWARGS,
     )
 
     def _normalize(s):

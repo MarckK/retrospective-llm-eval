@@ -1,9 +1,9 @@
 import click
 import datasets
 import dotenv
-import pandas as pd
 
 from truthfulqa_evaluation import evaluate_truthfulqa_dataset_mc1_on_model
+
 
 def get_truthfulqa_dataset(category=None):
     ds = datasets.load_dataset("truthful_qa", "multiple_choice")["validation"]

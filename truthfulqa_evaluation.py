@@ -31,7 +31,7 @@ def evaluate_truthfulqa_sample_mc1_on_completion_model(sample, model_name) -> fl
         resp = litellm.text_completion(
             model=model_name,
             prompt=prompt,
-            logprobs=2,
+            logprobs=1, # Doesn't seem to work - proposed explanation requiring `openai` downgrade.
             temperature=0.0,
             **LITELLM_EXTRA_KWARGS,
         )

@@ -82,7 +82,9 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
     )
 
     def _normalize(s):
-        return re.sub(r"\s+", "", s).lower()
+        # Some models have a tendency to add additional questions after the answer,
+        # so we only pick the first line.
+        return re.sub(r"\W+", "", s.strip().split("\n")[0]).lower()
 
     resp_message = resp["choices"][0]["message"].content
     for i, choice in enumerate(sample["mc1_targets"]["choices"]):

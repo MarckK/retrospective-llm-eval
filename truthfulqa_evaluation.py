@@ -120,6 +120,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
         print(
             f"Correct: {chosen_index == 0}."
             f" Question: {sample['question'].strip()}."
+            f" Expected: {sample['mc1_targets']['choices'][0].strip()}."
             f" Generated: {resp_message.split(NEWLINE)[0].strip()}"
         )
     return score

@@ -54,13 +54,18 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
     # The first choice is always the right one so we shuffle.
     choices = list(sample["mc1_targets"]["choices"])
     random.Random(0).shuffle(choices)
-    formatted_options = [
-        (
-            f"{chr(ord('a')+i)}: {choice}" if select_a_to_e
+
+    formatted_options = []
+    # We use these when encoding the options as a-e.
+    letter2option_index = {}
+    for i, choice in enumerate(choices):
+        letter = chr(ord('a')+i)
+        formatted_options.append(
+            f"{letter}: {choice}" if select_a_to_e
             else f"{choice}"
         )
-        for i, choice in enumerate(choices)
-    ]
+        letter2option_index[letter] = choices.index(choice)
+
     messages = [
         {
             "content": (
@@ -91,20 +96,23 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
     NEWLINE = "\n" # Just defined as not allowed in f-string
 
     resp_message = resp["choices"][0]["message"].content
-    for i, choice in enumerate(sample["mc1_targets"]["choices"]):
-        # @TODO make this more reliable
-        if (ord(resp_message.lower().strip()[0]) == ord("a") + i) or (_normalize(resp_message) in _normalize(choice)):
-            chosen_index = i
-            break
+    if select_a_to_e and _normalize(resp_message)[0] in "abcde":
+        chosen_index = letter2option_index[_normalize(resp_message)[0]]
     else:
-        # @TODO  make sure this does not happen
-        print(
-            f"Error: No provided option selected - counting as failed."
-            f" Question: {sample['question'].strip()}."
-            f" Expected: {sample['mc1_targets']['choices'][0].strip()}."
-            f" Generated: {resp_message.split(NEWLINE)[0].strip()}"
-        )
-        return 0.0
+        for i, choice in enumerate(sample["mc1_targets"]["choices"]):
+            # @TODO make this more reliable
+            if _normalize(resp_message) in _normalize(choice):
+                chosen_index = i
+                break
+        else:
+            # @TODO  make sure this does not happen
+            print(
+                f"Error: No provided option selected - counting as failed."
+                f" Question: {sample['question'].strip()}."
+                f" Expected: {sample['mc1_targets']['choices'][0].strip()}."
+                f" Generated: {resp_message.split(NEWLINE)[0].strip()}"
+            )
+            return 0.0
 
     # For the MC1 dataset, index 0 is always the right answer.
     score = float(chosen_index == 0)

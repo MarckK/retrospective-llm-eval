@@ -11,6 +11,7 @@ import tqdm
 # * Output a csv with results for each question.
 # * Cache results on disc so that we don't re-evaluate.
 # * Evaluate representation impact.
+# * Recreate recorded old GPT-3 score with logprobs.
 
 
 # @TODO Add budget constraint

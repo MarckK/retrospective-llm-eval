@@ -15,10 +15,12 @@ To specify model, supply `--model <name>` using the [LiteLLM naming](https://doc
 
 To make a shorter test run, supply `--num-samples <count>`.
 
+To see the generated answer to every question, add `--verbose`.
+
 Example:
 
 ```
-python evaluate.py model=gpt-4-1106-preview num-samples=3
+python evaluate.py model=gpt-4-1106-preview num-samples=3 --verbose
 ```
 
 More options: `python evaluate.py --help`.

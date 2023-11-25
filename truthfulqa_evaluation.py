@@ -65,7 +65,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
         else:
             letter = chr(ord('a')+i)
         formatted_options.append(
-            f"{letter}: {choice}" if select_a_to_e
+            f"{letter}: {choice}" if select_a_to_e or select_1_to_5
             else f"{choice}"
         )
         letter2option_index[letter] = choices.index(choice)
@@ -74,6 +74,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
         {
             "content": (
                 f"The provided answer MUST BE one of [a-e]." if select_a_to_e
+                else f"The provided answer MUST BE one of 1,2,3,4,5." if select_1_to_5
                 else f"The provided answer MUST BE one of provided options."
             ),
             "role": "system",

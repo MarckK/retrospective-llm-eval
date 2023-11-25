@@ -47,7 +47,8 @@ def evaluate_truthfulqa_sample_mc1_on_completion_model(sample, model_name) -> fl
 def evaluate_truthfulqa_sample_mc1_on_chat_model(
     sample,
     model_name,
-    select_a_to_e=True,
+    select_a_to_e=False,
+    select_1_to_5=True,
     verbose=False,
 ) -> float:
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""
@@ -59,7 +60,10 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
     # We use these when encoding the options as a-e.
     letter2option_index = {}
     for i, choice in enumerate(choices):
-        letter = chr(ord('a')+i)
+        if select_1_to_5:
+            letter = chr(ord('1')+i)
+        else:
+            letter = chr(ord('a')+i)
         formatted_options.append(
             f"{letter}: {choice}" if select_a_to_e
             else f"{choice}"
@@ -97,6 +101,8 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
 
     resp_message = resp["choices"][0]["message"].content
     if select_a_to_e and _normalize(resp_message)[0] in "abcde":
+        chosen_index = letter2option_index[_normalize(resp_message)[0]]
+    elif select_1_to_5 and _normalize(resp_message)[0] in "12345":
         chosen_index = letter2option_index[_normalize(resp_message)[0]]
     else:
         for i, choice in enumerate(sample["mc1_targets"]["choices"]):

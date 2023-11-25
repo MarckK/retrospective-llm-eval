@@ -47,7 +47,8 @@ def evaluate_truthfulqa_sample_mc1_on_completion_model(sample, model_name) -> fl
 def evaluate_truthfulqa_sample_mc1_on_chat_model(
     sample,
     model_name,
-    select_a_to_e=False,
+    select_a_to_e=True,
+    verbose=False,
 ) -> float:
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""
     # The first choice is always the right one so we shuffle.
@@ -87,6 +88,8 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
         # so we only pick the first line.
         return re.sub(r"\W+", "", s.strip().split("\n")[0]).lower()
 
+    NEWLINE = "\n" # Just defined as not allowed in f-string
+
     resp_message = resp["choices"][0]["message"].content
     for i, choice in enumerate(sample["mc1_targets"]["choices"]):
         # @TODO make this more reliable
@@ -95,18 +98,31 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
             break
     else:
         # @TODO  make sure this does not happen
-        NEWLINE = "\n"
-        print(f"Error: No provided option selected - counting as failed. Question: {sample['question'].strip()}. Expected: {sample['mc1_targets']['choices'][0].strip()}. Generated: {resp_message.split(NEWLINE)[0].strip()}")
-        chosen_index = -1
+        print(
+            f"Error: No provided option selected - counting as failed."
+            f" Question: {sample['question'].strip()}."
+            f" Expected: {sample['mc1_targets']['choices'][0].strip()}."
+            f" Generated: {resp_message.split(NEWLINE)[0].strip()}"
+        )
+        return 0.0
 
-    return chosen_index == 0
+    # For the MC1 dataset, index 0 is always the right answer.
+    score = float(chosen_index == 0)
+    if verbose:
+        print(
+            f"Correct: {chosen_index == 0}."
+            f" Question: {sample['question'].strip()}."
+            f" Generated: {resp_message.split(NEWLINE)[0].strip()}"
+        )
+    return score
 
 
 def evaluate_truthfulqa_sample_mc1_on_model(
-        sample,
-        model_name,
-        use_chat_encoding_for_everything=True
-    ):
+    sample,
+    model_name,
+    use_chat_encoding_for_everything=True,
+    verbose=False,
+):
     """Method to evaluate a sample from the TruthfulQA dataset on a model.
 
     Due to API limitations, Completion and Chat models will encode the problem differently.
@@ -118,16 +134,17 @@ def evaluate_truthfulqa_sample_mc1_on_model(
     """
     # @TODO add some way to automatically detect the type of model
     if use_chat_encoding_for_everything or ("turbo" in model_name or "chat" in model_name or "claude" in model_name):
-        return evaluate_truthfulqa_sample_mc1_on_chat_model(sample, model_name)
+        return evaluate_truthfulqa_sample_mc1_on_chat_model(sample, model_name, verbose=verbose)
     else:
-        return evaluate_truthfulqa_sample_mc1_on_completion_model(sample, model_name)
+        return evaluate_truthfulqa_sample_mc1_on_completion_model(sample, model_name, verbose=verbose)
 
 
 def evaluate_truthfulqa_dataset_mc1_on_model(
-        dataset,
-        model_name,
-        use_chat_encoding_for_everything=True,
-    ) -> dict:
+    dataset,
+    model_name,
+    use_chat_encoding_for_everything=True,
+    verbose=False,
+) -> dict:
     """
     Method to evaluate a TruthfulQA dataset (or a subset thereof) on a model.
 
@@ -149,7 +166,9 @@ def evaluate_truthfulqa_dataset_mc1_on_model(
             sample,
             model_name,
             use_chat_encoding_for_everything=use_chat_encoding_for_everything,
+            verbose=verbose,
         )
+
     return dict(
         num_correct=total_correct,
         num_total=total,

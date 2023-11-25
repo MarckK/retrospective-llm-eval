@@ -24,12 +24,14 @@ def get_truthfulqa_dataset(category=None):
 @click.option("--use-chat-encoding-for-everything", default=True, help="If True, use the chat-model encoding for everything.")
 @click.option("--category", default="Misconceptions", help="The category of the TruthfulQA dataset to evaluate on.")
 @click.option("--num-samples", default=-1, help="The number of samples from the TruthfulQA dataset to evaluate on.")
+@click.option("--verbose", is_flag=True, default=False, help="Provide verbose output.")
 def evaluate_truthfulqa(
     model,
     # output_file,
     use_chat_encoding_for_everything,
     category,
     num_samples,
+    verbose,
 ):
     # if output_file:
     #     raise NotImplementedError("Writing to file not yet implemented")
@@ -42,6 +44,7 @@ def evaluate_truthfulqa(
         ds,
         model,
         use_chat_encoding_for_everything=use_chat_encoding_for_everything,
+        verbose=verbose,
     )
     print(results)
     return results

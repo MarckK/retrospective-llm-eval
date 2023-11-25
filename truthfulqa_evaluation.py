@@ -43,18 +43,28 @@ def evaluate_truthfulqa_sample_mc1_on_completion_model(sample, model_name) -> fl
 
 
 # @TODO evaluate the impact of the a-e encoding.
-def evaluate_truthfulqa_sample_mc1_on_chat_model(sample, model_name) -> float:
+def evaluate_truthfulqa_sample_mc1_on_chat_model(
+    sample,
+    model_name,
+    select_a_to_e=False,
+) -> float:
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""
     # The first choice is always the right one so we shuffle.
     choices = list(sample["mc1_targets"]["choices"])
     random.Random(0).shuffle(choices)
     formatted_options = [
-        f"{chr(ord('a')+i)}: {choice}"
+        (
+            f"{chr(ord('a')+i)}: {choice}" if select_a_to_e
+            else f"{choice}"
+        )
         for i, choice in enumerate(choices)
     ]
     messages = [
         {
-            "content": f"The provided answer MUST BE one of [a-e].",
+            "content": (
+                f"The provided answer MUST BE one of [a-e]." if select_a_to_e
+                else f"The provided answer MUST BE one of provided options."
+            ),
             "role": "system",
         },
         {

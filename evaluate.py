@@ -10,18 +10,36 @@ def get_truthfulqa_dataset(category=None):
     if category and category != "all":
         # The multiple_choice dataset does not have a category field, so we need to filter on the generation dataset
         filtered_ds = datasets.load_dataset("truthful_qa", "generation")
-        filtered_ds = filtered_ds.filter(lambda x: x["category"].lower() == category.lower())
+        filtered_ds = filtered_ds.filter(
+            lambda x: x["category"].lower() == category.lower()
+        )
         filtered_questions = filtered_ds["validation"]["question"]
         ds = ds.filter(lambda x: x["question"] in filtered_questions)
     return ds
 
 
 @click.command()
-@click.option("--model", default="gpt-3.5-turbo", help="The name of the model to evaluate on. See LiteLLM docs for more info.")
+@click.option(
+    "--model",
+    default="gpt-3.5-turbo",
+    help="The name of the model to evaluate on. See LiteLLM docs for more info.",
+)
 # @click.option("--output-file", default="results.csv", help="The name of the file to write the results to.") #@TODO
-@click.option("--use-chat-encoding-for-everything", default=True, help="If True, use the chat-model encoding for everything.")
-@click.option("--category", default="Misconceptions", help="The category of the TruthfulQA dataset to evaluate on.")
-@click.option("--num-samples", default=-1, help="The number of samples from the TruthfulQA dataset to evaluate on.")
+@click.option(
+    "--use-chat-encoding-for-everything",
+    default=True,
+    help="If True, use the chat-model encoding for everything.",
+)
+@click.option(
+    "--category",
+    default="Misconceptions",
+    help="The category of the TruthfulQA dataset to evaluate on.",
+)
+@click.option(
+    "--num-samples",
+    default=-1,
+    help="The number of samples from the TruthfulQA dataset to evaluate on.",
+)
 @click.option("--verbose", is_flag=True, default=False, help="Provide verbose output.")
 def evaluate_truthfulqa(
     model,

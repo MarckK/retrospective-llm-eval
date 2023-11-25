@@ -48,7 +48,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
     sample,
     model_name,
     select_a_to_e=False,
-    select_1_to_5=True,
+    select_1_to_5=False,
     verbose=False,
 ) -> float:
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""

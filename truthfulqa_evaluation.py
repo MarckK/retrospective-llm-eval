@@ -94,7 +94,8 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
             break
     else:
         # @TODO  make sure this does not happen
-        print(f"Error: No provided option selected - counting as failed. Question: {sample['question']}")
+        NEWLINE = "\n"
+        print(f"Error: No provided option selected - counting as failed. Question: {sample['question'].strip()}. Expected: {sample['mc1_targets']['choices'][0].strip()}. Generated: {resp_message.split(NEWLINE)[0].strip()}")
         chosen_index = -1
 
     return chosen_index == 0

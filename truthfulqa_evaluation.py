@@ -15,7 +15,7 @@ import tqdm
 
 # @TODO Add budget constraint
 LITELLM_EXTRA_KWARGS = dict(
-    num_retries=3,
+    num_retries=10,
     max_tokens=100,
     request_timeout=10, # OpenAI API sometimes gets stuck
 )

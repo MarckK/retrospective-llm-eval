@@ -47,7 +47,7 @@ def evaluate_truthfulqa_sample_mc1_on_completion_model(sample, model_name) -> fl
 def evaluate_truthfulqa_sample_mc1_on_chat_model(
     sample,
     model_name,
-    select_a_to_e=True,
+    select_a_to_e=False,
     select_1_to_5=False,
     verbose=False,
 ) -> float:

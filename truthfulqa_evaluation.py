@@ -82,7 +82,8 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(sample, model_name) -> float:
             break
     else:
         # @TODO  make sure this does not happen
-        raise RuntimeError("No provided option selected")
+        print(f"Error: No provided option selected - counting as failed. Question: {sample['question']}")
+        chosen_index = -1
 
     return chosen_index == 0
 

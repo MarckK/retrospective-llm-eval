@@ -8,6 +8,7 @@ import tqdm
 
 # Notable TODOs:
 # * Make work with local HF models.
+# * Output a csv with results for each question.
 # * Cache results on disc so that we don't re-evaluate.
 # * Evaluate representation impact.
 

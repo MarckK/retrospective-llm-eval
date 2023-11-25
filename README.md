@@ -6,19 +6,19 @@
 ## Use
 
 ```
-python main.py <optional arguments>
+python evaluate.py <optional arguments>
 ```
 
 By default, this will run an evaluation with gpt-3.5-turbo on all 100 samples in the Misconceptions category of TruthfulQA.
 
 To specify model, supply `--model <name>` using the [LiteLLM naming](https://docs.litellm.ai/docs/providers).
 
-To make a shorter test run, supply `--num_samples <count>`.
+To make a shorter test run, supply `--num-samples <count>`.
 
 Example:
 
 ```
-python main.py model=gpt-4-1106-preview num_samples=3
+python evaluate.py model=gpt-4-1106-preview num-samples=3
 ```
 
-More options: `python main.py --help`.
+More options: `python evaluate.py --help`.

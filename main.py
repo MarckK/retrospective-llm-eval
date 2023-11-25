@@ -19,13 +19,13 @@ def get_truthfulqa_dataset(category=None):
 # Define click arguments
 
 @click.command()
-@click.option("--model-name", default="gpt-3.5-turbo", help="The name of the model to evaluate on. See LiteLLM docs for more info.")
+@click.option("--model", default="gpt-3.5-turbo", help="The name of the model to evaluate on. See LiteLLM docs for more info.")
 # @click.option("--output-file", default="results.csv", help="The name of the file to write the results to.") #@TODO
 @click.option("--use-chat-encoding-for-everything", default=True, help="If True, use the chat-model encoding for everything.")
 @click.option("--category", default="Misconceptions", help="The category of the TruthfulQA dataset to evaluate on.")
 @click.option("--num-samples", default=-1, help="The number of samples from the TruthfulQA dataset to evaluate on.")
 def evaluate_truthfulqa(
-    model_name,
+    model,
     # output_file,
     use_chat_encoding_for_everything,
     category,
@@ -40,7 +40,7 @@ def evaluate_truthfulqa(
     print("Evaluating on", len(ds), "samples")
     results = evaluate_truthfulqa_dataset_mc1_on_model(
         ds,
-        model_name,
+        model,
         use_chat_encoding_for_everything=use_chat_encoding_for_everything,
     )
     print(results)

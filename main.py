@@ -5,8 +5,15 @@ import pandas as pd
 
 from truthfulqa_evaluation import evaluate_truthfulqa_dataset_mc1_on_model
 
-def get_truthfulqa_dataset():
-    return datasets.load_dataset("truthful_qa", "multiple_choice")["validation"]
+def get_truthfulqa_dataset(category=None):
+    ds = datasets.load_dataset("truthful_qa", "multiple_choice")["validation"]
+    if category and category != "all":
+        # The multiple_choice dataset does not have a category field, so we need to filter on the generation dataset
+        filtered_ds = datasets.load_dataset("truthful_qa", "generation")
+        filtered_ds = filtered_ds.filter(lambda x: x["category"].lower() == category.lower())
+        filtered_questions = filtered_ds["validation"]["question"]
+        ds = ds.filter(lambda x: x["question"] in filtered_questions)
+    return ds
 
 
 # Define click arguments
@@ -27,9 +34,7 @@ def evaluate_truthfulqa(
     # if output_file:
     #     raise NotImplementedError("Writing to file not yet implemented")
 
-    ds = get_truthfulqa_dataset()
-    if category != "all":
-        ds = ds.filter(lambda x: x["category"] == category)
+    ds = get_truthfulqa_dataset(category)
     if num_samples != -1:
         ds = ds.select(range(num_samples))
     print("Evaluating on", len(ds), "samples")

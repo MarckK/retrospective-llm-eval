@@ -16,8 +16,6 @@ def get_truthfulqa_dataset(category=None):
     return ds
 
 
-# Define click arguments
-
 @click.command()
 @click.option("--model", default="gpt-3.5-turbo", help="The name of the model to evaluate on. See LiteLLM docs for more info.")
 # @click.option("--output-file", default="results.csv", help="The name of the file to write the results to.") #@TODO

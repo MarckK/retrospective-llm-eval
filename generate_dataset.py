@@ -22,7 +22,7 @@ def generate_similar_dataset_sample(
                 + "\n".join("* " + json.dumps(sample) for sample in samples),
             }
         ],
-        temperature=0.0,
+        temperature=1.0,
         max_tokens=max_tokens,
         stop=["\n*"],
     )

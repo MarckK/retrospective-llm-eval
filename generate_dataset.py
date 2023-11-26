@@ -53,3 +53,9 @@ def generate_similar_dataset(
             )
         )
     return datasets.concatenate_datasets(generated_samples)
+
+
+if __name__ == "__main__":
+    ds = load_truthfulqa(category="Misconceptions")
+    new_ds = generate_similar_dataset(ds, 100, model_name="gpt-4-1106-preview")
+    new_ds.to_csv("generated_truthfulqa_dataset.csv")

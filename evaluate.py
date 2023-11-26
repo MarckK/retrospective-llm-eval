@@ -71,6 +71,8 @@ def evaluate_truthfulqa(
                     "mc1_targets": eval(x["mc1_targets"], dict(globals(), array=array), locals()),
                 }
             )
+        elif dataset_file.endswith(".json") or dataset_file.endswith(".jsonl"):
+            ds = datasets.load_dataset("json", data_files=dataset_file)["train"]
         else:
             raise ValueError("Unknown dataset file type")
         print(ds)

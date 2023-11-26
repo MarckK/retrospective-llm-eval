@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 datasets = "^2.15.0"
 litellm = "^1.7.5"
+tenacity = "^8.2.3"
 
 
 [tool.poetry.group.dev.dependencies]

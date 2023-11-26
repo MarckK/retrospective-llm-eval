@@ -40,6 +40,20 @@ python evaluate.py model=gpt-4-1106-preview num-samples=3 --verbose
 
 More options: `python evaluate.py --help`.
 
+## Evalaution
+
+```
+python evaluate.py --dataset-file 'data/crafted_dataset_unfiltered.jsonl' --model davinci-002
+python evaluate.py --dataset-file 'data/crafted_dataset_unfiltered.jsonl' --model gpt-3.5-turbo
+python evaluate.py --dataset-file 'data/crafted_dataset_unfiltered.jsonl' --model gpt-4-0314
+python evaluate.py --dataset-file 'data/crafted_dataset_unfiltered.jsonl' --model gpt-4-1106-preview
+
+python evaluate.py --dataset-file 'data/generated_dataset_unfiltered.csv' --model davinci-002
+python evaluate.py --dataset-file 'data/generated_dataset_unfiltered.csv' --model gpt-3.5-turbo
+python evaluate.py --dataset-file 'data/generated_dataset_unfiltered.csv' --model gpt-4-0314
+python evaluate.py --dataset-file 'data/generated_dataset_unfiltered.csv' --model gpt-4-1106-preview
+```
+
 ## Running HuggingFace models
 
 The support for HuggingFace models in LiteLLM seem to be broken at the moment. We use Oobabooga to run HuggingFace models and provide an OpenAI API over it.

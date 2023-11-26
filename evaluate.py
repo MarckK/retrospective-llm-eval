@@ -1,5 +1,7 @@
 import click
+import datasets
 import dotenv
+import json
 import openai
 
 from truthfulqa_evaluation import evaluate_truthfulqa_dataset_mc1_on_model
@@ -33,6 +35,11 @@ from truthfulqa_dataset import load_truthfulqa
     default=None,
     help="The API url to use to query an LLM.",
 )
+@click.option(
+    "--dataset-file",
+    default=None,
+    help="The path to a dataset file to evaluate on.",
+)
 @click.option("--verbose", is_flag=True, default=False, help="Provide verbose output.")
 def evaluate_truthfulqa(
     model,
@@ -41,6 +48,7 @@ def evaluate_truthfulqa(
     category,
     api_url,
     num_samples,
+    dataset_file,
     verbose,
 ):
     # if output_file:
@@ -51,7 +59,24 @@ def evaluate_truthfulqa(
         openai.api_base = api_url + "/v1"
         print("** Using API base:", openai.api_base, "**")
 
-    ds = load_truthfulqa(category)
+    if dataset_file:
+        if dataset_file.endswith(".csv"):
+            ds = datasets.load_dataset("csv", data_files=dataset_file)["train"]
+            #@TOOD clean this up
+            def array(x, dtype=None):
+                return x
+            ds = ds.map(
+                lambda x: {
+                    "question": x["question"],
+                    "mc1_targets": eval(x["mc1_targets"], dict(globals(), array=array), locals()),
+                }
+            )
+        else:
+            raise ValueError("Unknown dataset file type")
+        print(ds)
+        print(ds["mc1_targets"])
+    else:
+        ds = load_truthfulqa(category)
     if num_samples != -1:
         ds = ds.select(range(num_samples))
     print("Evaluating on", len(ds), "samples")

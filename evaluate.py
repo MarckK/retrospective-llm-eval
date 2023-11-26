@@ -1,22 +1,9 @@
 import click
-import datasets
 import dotenv
 import openai
 
 from truthfulqa_evaluation import evaluate_truthfulqa_dataset_mc1_on_model
-
-
-def get_truthfulqa_dataset(category=None):
-    ds = datasets.load_dataset("truthful_qa", "multiple_choice")["validation"]
-    if category and category != "all":
-        # The multiple_choice dataset does not have a category field, so we need to filter on the generation dataset
-        filtered_ds = datasets.load_dataset("truthful_qa", "generation")
-        filtered_ds = filtered_ds.filter(
-            lambda x: x["category"].lower() == category.lower()
-        )
-        filtered_questions = filtered_ds["validation"]["question"]
-        ds = ds.filter(lambda x: x["question"] in filtered_questions)
-    return ds
+from truthfulqa_dataset import get_truthfulqa_dataset
 
 
 @click.command()

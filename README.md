@@ -27,7 +27,9 @@ More options: `python evaluate.py --help`.
 
 ## Running Huggingface models
 
-Oobabooga may be the most versatile local LLM server and supports most HF models.
+Oobabooga may be one of the most versatile options to serve various HF models.
+
+### Running through Oobabooga locally
 
 Step 1. Check out https://github.com/oobabooga/text-generation-webui
 

@@ -3,7 +3,7 @@ import dotenv
 import openai
 
 from truthfulqa_evaluation import evaluate_truthfulqa_dataset_mc1_on_model
-from truthfulqa_dataset import get_truthfulqa_dataset
+from truthfulqa_dataset import load_truthfulqa
 
 
 @click.command()
@@ -51,7 +51,7 @@ def evaluate_truthfulqa(
         openai.api_base = api_url + "/v1"
         print("** Using API base:", openai.api_base, "**")
 
-    ds = get_truthfulqa_dataset(category)
+    ds = load_truthfulqa(category)
     if num_samples != -1:
         ds = ds.select(range(num_samples))
     print("Evaluating on", len(ds), "samples")

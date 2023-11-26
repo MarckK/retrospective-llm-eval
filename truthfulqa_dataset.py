@@ -2,7 +2,7 @@
 import datasets
 
 
-def get_truthfulqa_dataset(category=None):
+def load_truthfulqa(category=None):
     ds = datasets.load_dataset("truthful_qa", "multiple_choice")["validation"]
     if category and category != "all":
         # The multiple_choice dataset does not have a category field, so we need to filter on the generation dataset

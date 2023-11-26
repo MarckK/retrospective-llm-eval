@@ -6,6 +6,8 @@ import tqdm
 
 # @TODO make deterministic
 
+from truthfulqa_dataset import load_truthfulqa
+
 
 def generate_similar_dataset_sample(
     samples: datasets.Dataset,

@@ -1,6 +1,7 @@
 # Custom
 
 .env
+*.lock
 
 # Boilerplate
 

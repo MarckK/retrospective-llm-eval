@@ -41,7 +41,7 @@ def generate_similar_dataset(
     max_tokens_per_sample=500,
 ):
     generated_samples = []
-    for _ in tqdm.range(target_size):
+    for _ in tqdm.trange(target_size):
         generated_samples.append(
             generate_similar_dataset_sample(
                 # Random selection each time

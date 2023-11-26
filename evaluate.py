@@ -1,6 +1,7 @@
 import click
 import datasets
 import dotenv
+import openai
 
 from truthfulqa_evaluation import evaluate_truthfulqa_dataset_mc1_on_model
 
@@ -40,17 +41,28 @@ def get_truthfulqa_dataset(category=None):
     default=-1,
     help="The number of samples from the TruthfulQA dataset to evaluate on.",
 )
+@click.option(
+    "--api-url",
+    default=None,
+    help="The API url to use to query an LLM.",
+)
 @click.option("--verbose", is_flag=True, default=False, help="Provide verbose output.")
 def evaluate_truthfulqa(
     model,
     # output_file,
     use_chat_encoding_for_everything,
     category,
+    api_url,
     num_samples,
     verbose,
 ):
     # if output_file:
     #     raise NotImplementedError("Writing to file not yet implemented")
+
+    # @TODO improve this
+    if api_url:
+        openai.api_base = api_url + "/v1"
+        print("** Using API base:", openai.api_base, "**")
 
     ds = get_truthfulqa_dataset(category)
     if num_samples != -1:

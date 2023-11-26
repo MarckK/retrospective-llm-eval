@@ -1,7 +1,15 @@
 ## Setup
 
 * Copy `.env.template` to `.env` and enter your keys (notably OPENAI_API_KEY).
-* `pip install requirements.txt` and optionally `requirements.dev.txt`
+* [Install poetry](https://python-poetry.org/docs/#installing-with-the-official-installer)
+* Install dependencies using poetry:
+  ```sh
+  poetry install --no-root
+  ```
+* Enter the virtual environment
+  ```sh
+  poetry shell
+  ```
 
 ## Use
 

@@ -9,7 +9,7 @@ import tqdm
 
 def generate_similar_dataset_sample(
     samples: datasets.Dataset,
-    model_name="gpt-3.5-turbo",
+    model_name="gpt-4-1106-preview",
     max_tokens=500,
 ):
     samples = samples.shuffle()

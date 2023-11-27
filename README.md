@@ -1,4 +1,4 @@
-# Code and data for retroactive evaluation
+# Code and datasets for retroactive evaluation
 
 ## Setup
 
@@ -45,15 +45,15 @@ More options: `python evaluate.py --help`.
 ## Evaluation
 
 ```
-python evaluate.py --dataset-file 'data/crafted_dataset_unfiltered.jsonl' --model davinci-002
-python evaluate.py --dataset-file 'data/crafted_dataset_unfiltered.jsonl' --model gpt-3.5-turbo
-python evaluate.py --dataset-file 'data/crafted_dataset_unfiltered.jsonl' --model gpt-4-0314
-python evaluate.py --dataset-file 'data/crafted_dataset_unfiltered.jsonl' --model gpt-4-1106-preview
+python evaluate.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model davinci-002
+python evaluate.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model gpt-3.5-turbo
+python evaluate.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model gpt-4-0314
+python evaluate.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model gpt-4-1106-preview
 
-python evaluate.py --dataset-file 'data/generated_dataset_unfiltered.csv' --model davinci-002
-python evaluate.py --dataset-file 'data/generated_dataset_unfiltered.csv' --model gpt-3.5-turbo
-python evaluate.py --dataset-file 'data/generated_dataset_unfiltered.csv' --model gpt-4-0314
-python evaluate.py --dataset-file 'data/generated_dataset_unfiltered.csv' --model gpt-4-1106-preview
+python evaluate.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model davinci-002
+python evaluate.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model gpt-3.5-turbo
+python evaluate.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model gpt-4-0314
+python evaluate.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model gpt-4-1106-preview
 ```
 
 ## Running HuggingFace models

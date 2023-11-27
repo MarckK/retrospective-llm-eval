@@ -57,7 +57,7 @@ python evaluate.py --dataset-file 'data/generated_dataset_unfiltered.csv' --mode
 
 ## Running HuggingFace models
 
-Evaluating through API likes that of OpenAI and Anthrophic can be done with just an API key.
+Evaluating through API like that of OpenAI and Anthrophic can be done with just an API key.
 
 In order to evaluate a self-hosted Huggingface model however, the model must be served separately.
 

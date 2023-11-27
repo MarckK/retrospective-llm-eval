@@ -58,9 +58,13 @@ python evaluate.py --dataset-file 'data/generated_dataset_unfiltered.csv' --mode
 
 ## Running HuggingFace models
 
-The support for HuggingFace models in LiteLLM seem to be broken at the moment. We use Oobabooga to run HuggingFace models and provide an OpenAI API over it.
+Evaluating through API likes that of OpenAI and Anthrophic can be done with just an API key.
 
-### Colab with Oobabooga **RECOMMENDED**
+In order to evaluate a self-hosted Huggingface model however, the model must be served separately.
+
+We recommend using Oobabooga for this, as explained below.
+
+### Colab with Oobabooga
 
 If you prefer to not run on your own computer, the free Colab plan should be sufficient for many text-generation models.
 

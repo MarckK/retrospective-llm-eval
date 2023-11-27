@@ -1,3 +1,5 @@
+# Code and data for retroactive evaluation
+
 ## Setup
 
 Step 1. Copy `.env.template` to `.env` and enter your keys (notably OPENAI_API_KEY).

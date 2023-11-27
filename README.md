@@ -42,7 +42,7 @@ python evaluate.py model=gpt-4-1106-preview num-samples=3 --verbose
 
 More options: `python evaluate.py --help`.
 
-## Evalaution
+## Evaluation
 
 ```
 python evaluate.py --dataset-file 'data/crafted_dataset_unfiltered.jsonl' --model davinci-002

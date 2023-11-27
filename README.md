@@ -8,9 +8,8 @@ Step 2. Install Python requirements:
 
 * `pip install requirements.txt` and optionally `requirements.dev.txt`
 
-Or using Poetry:
+Or using [Install poetry](https://python-poetry.org/docs/#installing-with-the-official-installer):
 
-* [Install poetry](https://python-poetry.org/docs/#installing-with-the-official-installer)
 * Install dependencies using poetry:
   ```sh
   poetry install --no-root

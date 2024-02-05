@@ -8,7 +8,7 @@ import random
 from truthfulqa_dataset import load_truthfulqa
 
 
-def extract_samples(ds: datasets.Dataset, k: int = 1) -> (list[dict], datasets.Dataset):
+def extract_random_samples(ds: datasets.Dataset, k: int = 1) -> (list[dict], datasets.Dataset):
     """Sample an item and return the modified dataset without the sampled item."""
 
     if k > len(ds):
@@ -59,15 +59,16 @@ def make_odd_one_out_sample(
         }
     }
 
+
 if __name__ == "__main__":
     # @TODO move to tests
     ds1 = load_truthfulqa("Misconceptions")
     ds1 = ds1.remove_columns(["mc2_targets"])
     ds2 = datasets.load_dataset("json", data_files="datasets/crafted_dataset_unfiltered.jsonl")["train"]
 
-    odd_one_out, ds2 = extract_samples(ds2, 1)
+    odd_one_out, ds2 = extract_random_samples(ds2, 1)
     odd_one_out = odd_one_out[0]
-    regular_samples, ds1 = extract_samples(ds1, 2)
+    regular_samples, ds1 = extract_random_samples(ds1, 2)
 
     odd_one_out_sample = make_odd_one_out_sample(odd_one_out, regular_samples, sample_to_str=truthfulqa_sample_to_str)
 

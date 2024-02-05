@@ -8,9 +8,8 @@ Step 2. Install Python requirements:
 
 * `pip install requirements.txt` and optionally `requirements.dev.txt`
 
-Or using Poetry:
+Or using [Install poetry](https://python-poetry.org/docs/#installing-with-the-official-installer):
 
-* [Install poetry](https://python-poetry.org/docs/#installing-with-the-official-installer)
 * Install dependencies using poetry:
   ```sh
   poetry install --no-root
@@ -58,7 +57,7 @@ python evaluate.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --
 
 ## Running HuggingFace models
 
-Evaluating through API likes that of OpenAI and Anthrophic can be done with just an API key.
+Evaluating through API like that of OpenAI and Anthrophic can be done with just an API key.
 
 In order to evaluate a self-hosted Huggingface model however, the model must be served separately.
 

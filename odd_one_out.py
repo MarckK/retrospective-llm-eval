@@ -60,16 +60,38 @@ def make_odd_one_out_sample(
     }
 
 
+def make_odd_one_out_samples_from_datasets(
+        odd_dataset: datasets.Dataset,
+        regular_dataset: datasets.Dataset,
+        num_regular_to_show_per_odd: int = 2,
+        num_samples: int = 1,
+        sample_to_str: Callable[[dict], str] = generic_sample_to_str,
+        replace_odd_dataset: bool = False,
+        replace_regular_dataset: bool = False
+    ) -> (list[dict], datasets.Dataset, datasets.Dataset):
+    """Create random odd-one-out questions from the given datasets."""
+    samples = []
+    for _ in range(num_samples):
+        odd_one_out, ds_odd = extract_random_samples(odd_dataset, 1)
+        odd_one_out = odd_one_out[0]
+        regular_samples, ds_regular = extract_random_samples(regular_dataset, num_regular_to_show_per_odd)
+        if not replace_odd_dataset:
+            odd_dataset = ds_odd
+        if not replace_regular_dataset:
+            regular_dataset = ds_regular
+        samples.append(make_odd_one_out_sample(odd_one_out, regular_samples, sample_to_str=sample_to_str))
+    return samples, odd_dataset, regular_dataset
+
+
 if __name__ == "__main__":
     # @TODO move to tests
     ds1 = load_truthfulqa("Misconceptions")
     ds1 = ds1.remove_columns(["mc2_targets"])
     ds2 = datasets.load_dataset("json", data_files="datasets/crafted_dataset_unfiltered.jsonl")["train"]
 
-    odd_one_out, ds2 = extract_random_samples(ds2, 1)
-    odd_one_out = odd_one_out[0]
-    regular_samples, ds1 = extract_random_samples(ds1, 2)
-
-    odd_one_out_sample = make_odd_one_out_sample(odd_one_out, regular_samples, sample_to_str=truthfulqa_sample_to_str)
-
-    print(generic_sample_to_str(odd_one_out_sample))
+    # Create multiple odd-one-out questions
+    odd_one_out_samples = make_odd_one_out_samples_from_datasets(
+        ds2, ds1, 2, 4, sample_to_str=truthfulqa_sample_to_str
+    )
+    for sample in odd_one_out_samples[0]:
+        print(generic_sample_to_str(sample))

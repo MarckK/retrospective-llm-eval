@@ -88,7 +88,7 @@ function displayQuestion(questions, index) {
     }).join('');
     
     const questionContainer = document.createElement('div');
-    questionContainer.className = 'question-container';
+    questionContainer.className = `question-container-${index}`;
     questionContainer.innerHTML = `<div><h3>Test ${index + 1}: Which one is different?</h3>${choicesHtml}<button onclick="submitAnswer(${index})">Submit</button></div>`;
     questionSection.appendChild(questionContainer);
 }
@@ -102,6 +102,7 @@ function submitAnswer(index) {
 
         // Disable options to prevent changes
         document.querySelectorAll(`input[name="question${index}"]`).forEach(option => option.disabled = true);
+        document.querySelectorAll(`.question-container-${index} div button`).forEach(option => option.remove());
 
         // Display feedback and proceed to the next question or finish
         displayFeedback(index, answer, selectedOption.parentElement);

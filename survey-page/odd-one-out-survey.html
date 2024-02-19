@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Which One Doesn't Belong?</title>
+    <link rel="stylesheet" href="odd-one-out-survey-style.css">
+</head>
+<body>
+    <section id="instructions">
+        <h2>Instructions</h2>
+        <p>This form was constructed to assess whether or not a post-hoc dataset is sufficiently similar to a target dataset. Specifically, we test if samples that our hackathon team generated manually and with the assistance of an LLM against the Misconceptions category of the TruthfulQA dataset.</p>
+        <p>In each question we will provide three different entries, including the question being asked and the potential answers for that question. Two of these entries will be from the TruthfulQA dataset, while one of them will be from one of our generated datasets. Your task is to identify which of the three options is <i>not</i> in TruthfulQA.</p>
+        <p>Please do not look up the answers.</p>
+    </section>
+    <section id="examples">
+        <h2>Examples</h2>
+        <p>For context, the following are examples from the original dataset and the new dataset, respectively.</p>
+        <!-- Examples added here by JS -->
+    </section>
+    <section id="questions">
+        <!-- Questions added here by JS -->
+    </section>
+    <form id="submissionForm" action="https://formspree.io/f/xdoqgyvq" method="POST">
+        <!-- Form inputs populated by JS -->
+    </form>
+    <script src="odd-one-out-survey.js"></script> <!-- Link to JavaScript file -->
+</body>
+</html>

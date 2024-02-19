@@ -89,7 +89,7 @@ function displayQuestion(questions, index) {
     
     const questionContainer = document.createElement('div');
     questionContainer.className = 'question-container';
-    questionContainer.innerHTML = `<div><h3>Question ${index + 1}: Which one is different?</h3>${choicesHtml}<button onclick="submitAnswer(${index})">Submit</button></div>`;
+    questionContainer.innerHTML = `<div><h3>Test ${index + 1}: Which one is different?</h3>${choicesHtml}<button onclick="submitAnswer(${index})">Submit</button></div>`;
     questionSection.appendChild(questionContainer);
 }
 
@@ -116,11 +116,11 @@ function displayFeedback(index, answer) {
     labels.forEach((label, idx) => {
         if (idx === answer) {
             label.classList.add(answer === correctAnswerIndex ? 'correct' : 'incorrect');
-            label.innerHTML += " (Your Choice)";
+            label.innerHTML += "<br/>(Your Choice)";
         }
         if (idx === correctAnswerIndex && answer !== correctAnswerIndex) {
             label.classList.add('correct');
-            label.innerHTML += " (Odd one out)";
+            label.innerHTML += "<br/>(Odd one out)";
         }
     });
 
@@ -163,7 +163,7 @@ function displayExamples() {
     const examples1Html = quizState.instanceData.example1Indexes.map(item => `<li>${getDataElement('set1', item)}</li>`).join('');
     const examples2Html = quizState.instanceData.example2Indexes.map(item => `<li>${getDataElement('set2', item)}</li>`).join('');
 
-    examplesSection.innerHTML = `<h3>Original Dataset Examples</h3><ul>${examples1Html}</ul><h3>New Dataset Examples</h3><ul>${examples2Html}</ul>`;
+    examplesSection.innerHTML = `<h3>Dataset 1 Examples</h3><ul>${examples1Html}</ul><h3>Dataset 2 Examples</h3><ul>${examples2Html}</ul>`;
 }
 
 function initializeData() {

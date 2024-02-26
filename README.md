@@ -22,7 +22,7 @@ Or using [Install poetry](https://python-poetry.org/docs/#installing-with-the-of
 ## Use
 
 ```
-python evaluate.py <optional arguments>
+python evaluate_dataset.py <optional arguments>
 ```
 
 By default, this will run an evaluation with gpt-3.5-turbo on all 100 samples in the Misconceptions category of TruthfulQA.
@@ -36,23 +36,23 @@ To see the generated answer to every question, add `--verbose`.
 Example:
 
 ```
-python evaluate.py model=gpt-4-1106-preview num-samples=3 --verbose
+python evaluate_dataset.py model=gpt-4-1106-preview num-samples=3 --verbose
 ```
 
-More options: `python evaluate.py --help`.
+More options: `python evaluate_dataset.py --help`.
 
 ## Evaluation
 
 ```
-python evaluate.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model davinci-002
-python evaluate.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model gpt-3.5-turbo
-python evaluate.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model gpt-4-0314
-python evaluate.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model gpt-4-1106-preview
+python evaluate_dataset.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model davinci-002
+python evaluate_dataset.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model gpt-3.5-turbo
+python evaluate_dataset.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model gpt-4-0314
+python evaluate_dataset.py --dataset-file 'datasets/crafted_dataset_unfiltered.jsonl' --model gpt-4-1106-preview
 
-python evaluate.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model davinci-002
-python evaluate.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model gpt-3.5-turbo
-python evaluate.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model gpt-4-0314
-python evaluate.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model gpt-4-1106-preview
+python evaluate_dataset.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model davinci-002
+python evaluate_dataset.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model gpt-3.5-turbo
+python evaluate_dataset.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model gpt-4-0314
+python evaluate_dataset.py --dataset-file 'datasets/generated_dataset_unfiltered.csv' --model gpt-4-1106-preview
 ```
 
 ## Running HuggingFace models
@@ -79,7 +79,7 @@ You can start a server that you can connect to on Colab from this script.
 
 6. Step 6. Wait for it to finish loading. This can take several minutes.
 7. Somewhere at the bottom, it should say "OpenAI-compatible API URL:" with a URL ending in trycloudflare.com. Copy this.
-8. Run `python evaluate.py --api-url <URL>`, replacing URL with the Cloudflare URL. This will ignore the model option. (Even if you write gpt-3 it will send them to your notebook)
+8. Run `python evaluate_dataset.py --api-url <URL>`, replacing URL with the Cloudflare URL. This will ignore the model option. (Even if you write gpt-3 it will send them to your notebook)
 
 ### Running through Oobabooga locally
 

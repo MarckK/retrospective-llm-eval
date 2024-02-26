@@ -1,7 +1,6 @@
 import click
 import datasets
 import dotenv
-import json
 import openai
 
 from truthfulqa_evaluation import evaluate_truthfulqa_dataset_mc1_on_model

@@ -191,7 +191,7 @@ function displayQuestion(questions, index) {
     
     const questionContainer = document.createElement('div');
     questionContainer.className = `question-container-${index}`;
-    questionContainer.innerHTML = `<div><h3>Test ${index + 1}: Which one is different?</h3>${choicesHtml}<button onclick="submitAnswer(${index})">Submit</button></div>`;
+    questionContainer.innerHTML = `<div><h3>Test ${index + 1}: Which one is from Dataset 2?</h3>${choicesHtml}<button onclick="submitAnswer(${index})">Submit</button></div>`;
     questionSection.appendChild(questionContainer);
 }
 

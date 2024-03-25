@@ -171,7 +171,7 @@ function getOrCreateMachineId() {
     let machineId = localStorage.getItem('machineId');
     if (!machineId) {
         machineId = generateUUID();
-        localStorage.setItem('machineId', quizState.machineId);
+        localStorage.setItem('machineId', machineId);
     }
     return machineId;
 }

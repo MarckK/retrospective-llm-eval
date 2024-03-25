@@ -306,7 +306,7 @@ function prepareFormForSubmission() {
     var numIncorrect = 0;
     quizState.userAnswers.forEach((answer, index) => {
         const question = quizState.instanceData.questions[index];
-        const correctAnswer = question.correctAnswer.index;
+        const correctAnswer = question.correctAnswer;
         const isCorrect = answer === correctAnswer;
 
         if (isCorrect) {

@@ -327,7 +327,7 @@ function prepareFormForSubmission() {
     });
     addHiddenField(form, 'numCorrect', numCorrect);
     addHiddenField(form, 'numIncorrect', numIncorrect);
-    
+
     // Add a submission button in case auto submit fails.
     if (!document.querySelector('#submissionForm input[type="submit"]')) {
         const submitButton = document.createElement('input');

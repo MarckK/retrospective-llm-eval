@@ -135,6 +135,24 @@ let quizState = {
     machineId: getOrCreateMachineId()
 };
 
+// ----
+
+function encodeInstanceData(data) {
+    data = JSON.stringify(data);
+    data = pako.deflate(data, { to: 'string' });
+    data = btoa(String.fromCharCode.apply(null, new Uint8Array(data)));
+    data = encodeURIComponent(data);
+    return data;
+}
+
+function decodeInstanceData(data) {
+    data = decodeURIComponent(data);
+    data = atob(data);
+    data = new Uint8Array(data.split('').map(char => char.charCodeAt(0)));
+    data = pako.inflate(data, { to: 'string' });
+    data = JSON.parse(data);
+    return data;
+}
 
 // Test query string
 
@@ -161,8 +179,9 @@ const testData = {
         }
     ]
 };
-const encodedData = encodeURIComponent(JSON.stringify(testData));
-const testUrl = window.location.href + `?version=v1&data=${encodedData}`;
+// const encodedData = encodeURIComponent(JSON.stringify(testData));
+const encodedData = encodeInstanceData(testData);
+const testUrl = window.location.href + `?version=v1&encodingVersion=v1&data=${encodedData}`;
 console.log(testUrl);
 
 // ----
@@ -249,11 +268,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeData(quizState.instanceData);
 });
 
+
 function decodeQueryString() {
     const params = new URLSearchParams(quizState.originalQueryString);
     quizState.version = params.get('version');
     quizState.samples = samples[quizState.version];
-    quizState.instanceData = JSON.parse(decodeURIComponent(params.get('data')));
+    quizState.instanceData = decodeInstanceData(params.get('data'));
+    // quizState.instanceData = JSON.parse(decodeURIComponent(params.get('data')));
     console.dir(quizState);
 }
 

@@ -181,7 +181,7 @@ const testData = {
 };
 // const encodedData = encodeURIComponent(JSON.stringify(testData));
 const encodedData = encodeInstanceData(testData);
-const testUrl = window.location.href + `?version=v1&encodingVersion=v1&data=${encodedData}`;
+const testUrl = window.location.href + `?version=v1&encodingVersion=v2&data=${encodedData}`;
 console.log(testUrl);
 
 // ----

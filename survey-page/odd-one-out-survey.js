@@ -216,16 +216,17 @@ function displayFeedback(index, answer) {
     const questionSection = document.getElementById('questions').children[index];
     const labels = questionSection.querySelectorAll('label');
     
-    labels.forEach((label, idx) => {
-        if (idx === answer) {
-            label.classList.add(answer === correctAnswerIndex ? 'correct' : 'incorrect');
-            label.innerHTML += "<br/>(Your Choice)";
-        }
-        if (idx === correctAnswerIndex && answer !== correctAnswerIndex) {
-            label.classList.add('correct');
-            label.innerHTML += "<br/>(Odd one out)";
-        }
-    });
+    // Show feedback about correctness
+    // labels.forEach((label, idx) => {
+    //     if (idx === answer) {
+    //         label.classList.add(answer === correctAnswerIndex ? 'correct' : 'incorrect');
+    //         label.innerHTML += "<br/>(Your Choice)";
+    //     }
+    //     if (idx === correctAnswerIndex && answer !== correctAnswerIndex) {
+    //         label.classList.add('correct');
+    //         label.innerHTML += "<br/>(Odd one out)";
+    //     }
+    // });
 
     // Prepare for the next question or completion after feedback is displayed
     quizState.currentQuestionIndex += 1;

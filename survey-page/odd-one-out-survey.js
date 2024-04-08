@@ -224,6 +224,7 @@ function submitAnswer(index) {
         // Disable options to prevent changes
         document.querySelectorAll(`input[name="question${index}"]`).forEach(option => option.disabled = true);
         document.querySelectorAll(`.question-container-${index} div button`).forEach(option => option.remove());
+        document.querySelector(`.question-container-${index}`).style.display = 'none';
 
         // Display feedback and proceed to the next question or finish
         displayFeedback(index, answer, selectedOption.parentElement);

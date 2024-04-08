@@ -2,7 +2,7 @@
 
 ## Setup
 
-Step 1. Copy `.env.template` to `.env` and enter your keys (notably OPENAI_API_KEY).
+Step 1. Copy `.env.template` to `.env` and enter your keys; notably `OPENAI_API_KEY`.
 
 Step 2. Install Python requirements:
 

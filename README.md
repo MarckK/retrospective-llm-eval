@@ -6,7 +6,11 @@ Step 1. Copy `.env.template` to `.env` and enter your keys (notably OPENAI_API_K
 
 Step 2. Install Python requirements:
 
-* `pip install requirements.txt` and optionally `requirements.dev.txt`
+```
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+```
 
 Or using [Install poetry](https://python-poetry.org/docs/#installing-with-the-official-installer):
 

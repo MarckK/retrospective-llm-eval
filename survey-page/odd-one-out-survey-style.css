@@ -120,3 +120,17 @@ tab {
     display: inline-block;
     margin-left: 4em;
 }
+
+#progress-container {
+    width: 100%;
+    background-color: #eee;
+}
+
+#progress-bar {
+    height: 20px;
+    background-color: #4CAF50;
+    width: 0%;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+}

@@ -199,6 +199,16 @@ function generateUUID() {
     return 'xxxx-xxxx-xxxx-xxxx'.replace(/[x]/g, () => (Math.random() * 16 | 0).toString(16));
 }
 
+function updateProgressBar() {
+    const totalQuestions = quizState.instanceData.questions.length;
+    const questionsAnswered = quizState.userAnswers.length;
+    const progressPercentage = (questionsAnswered / totalQuestions) * 100;
+
+    const progressBar = document.getElementById('progress-bar');
+    progressBar.style.width = progressPercentage + '%';
+    progressBar.innerText = `${questionsAnswered} of ${totalQuestions} answered`;
+}
+
 function displayQuestion(questions, index) {
     const questionSection = document.getElementById('questions');
     const question = questions[index];
@@ -220,6 +230,7 @@ function submitAnswer(index) {
         const answer = parseInt(selectedOption.value, 10);
         quizState.userAnswers[index] = answer;
         saveProgress();
+        updateProgressBar();
 
         // Disable options to prevent changes
         document.querySelectorAll(`input[name="question${index}"]`).forEach(option => option.disabled = true);
@@ -296,6 +307,7 @@ function initializeData() {
     if (!quizState.instanceData) return;
     displayExamples();
     displayQuestion(quizState.instanceData.questions, quizState.currentQuestionIndex);
+    updateProgressBar();
 }
 
 function resumeFromProgress(progress) {

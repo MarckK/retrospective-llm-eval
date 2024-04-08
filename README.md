@@ -12,17 +12,6 @@ source .venv/bin/activate
 pip install -r requirements-dev.txt
 ```
 
-Or using [Install poetry](https://python-poetry.org/docs/#installing-with-the-official-installer):
-
-* Install dependencies using poetry:
-  ```sh
-  poetry install --no-root
-  ```
-* Enter the virtual environment
-  ```sh
-  poetry shell
-  ```
-
 ## Use
 
 ```

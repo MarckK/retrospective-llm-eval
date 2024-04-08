@@ -64,10 +64,14 @@ def evaluate_truthfulqa(
             #@TOOD clean this up
             def array(x, dtype=None):
                 return x
+            def int32(x, dtype=None):
+                return x
+            def int64(x, dtype=None):
+                return x
             ds = ds.map(
                 lambda x: {
                     "question": x["question"],
-                    "mc1_targets": eval(x["mc1_targets"], dict(globals(), array=array), locals()),
+                    "mc1_targets": eval(x["mc1_targets"], dict(globals(), array=array, int32=int32, int64=int64), locals()),
                 }
             )
         elif dataset_file.endswith(".json") or dataset_file.endswith(".jsonl"):

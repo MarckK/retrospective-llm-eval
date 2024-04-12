@@ -34,7 +34,7 @@ def convert_exported_law_dataset():
         remove_columns=law_ds.column_names
     )
 
-    law_ds.to_pandas().to_csv("datasets/crafted_dataset_law_v4.csv")
+    law_ds.to_pandas().to_csv("datasets/crafted_dataset_law_v5.csv")
 
 
 if __name__ == "__main__":

@@ -102,11 +102,14 @@ ANSWER: The answer is \""""
         temperature=0.0,
         **LITELLM_EXTRA_KWARGS,
     )
+    resp_message = resp["choices"][0]["message"].content
 
     def _normalize(s):
         # Some models have a tendency to add additional questions after the answer,
         # so we only pick the first line.
         return re.sub(r"\W+", "", s.strip().split("\n")[0]).lower()
+
+    normalized_resp = _normalize(resp_message)
 
     NEWLINE = "\n"  # Just defined as not allowed in f-string
 

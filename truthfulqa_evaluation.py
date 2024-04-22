@@ -1,5 +1,6 @@
 import collections
 import litellm
+import pdb
 import re
 import tqdm
 
@@ -13,7 +14,7 @@ import tqdm
 # * Evaluate representation impact.
 # * Recreate recorded old GPT-3 score with logprobs.
 
-DEBUG = True
+DEBUG_PDB = False
 
 
 # @TODO Add budget constraint
@@ -259,7 +260,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
             index2run_count,
         )
     if not index2run_count:
-        if DEBUG:
+        if DEBUG_PDB:
             pdb.set_trace()
         print(
             f"Error: No provided option selected - counting as failed."

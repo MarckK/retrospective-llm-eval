@@ -53,7 +53,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
     verbose=False,
 ) -> float:
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""
-    # The first choice is always the right one so we shuffle.
+    # The first choice is always the right one so we shuffle a copy.
     choices = list(sample["mc1_targets"]["choices"])
     random.Random(0).shuffle(choices)
 

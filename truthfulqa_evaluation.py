@@ -267,6 +267,8 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
             f" Expected: {sample['mc1_targets']['choices'][0].strip()}."
         )
         return 0.0
+
+    # For the MC1 dataset, index 0 is always the right answer.
     score = float(index2run_count.most_common(1)[0][0] == 0)
     if verbose:
         print(

@@ -61,24 +61,24 @@ tokenizer = BertTokenizer.from_pretrained('bert-large-uncased')
 generator = pipeline(
     'text-generation', model=model, tokenizer=tokenizer, max_new_tokens=100,
     temperature=1.0, do_sample=False,
-)#'bert-base-uncased')
+)
 set_seed(42)
 
 
-def huggingface_local_adapter(
-    model,
-    messages,
-    temperature=1.0,
-    **LITELLM_EXTRA_KWARGS,
-):
-    message = "\n".join(
-        message["content"] for message in messages
-    )
-    resp = generator(message, max_new_tokens=100, num_return_sequences=1)
-    # print(message)
-    resp[0]["generated_text"] = resp[0]["generated_text"][len(message):]
-    print("**Generated:**", resp[0]["generated_text"])
-    return resp
+# def huggingface_local_adapter(
+#     model,
+#     messages,
+#     temperature=1.0,
+#     **LITELLM_EXTRA_KWARGS,
+# ):
+#     message = "\n".join(
+#         message["content"] for message in messages
+#     )
+#     resp = generator(message, max_new_tokens=100, num_return_sequences=1)
+#     # print(message)
+#     resp[0]["generated_text"] = resp[0]["generated_text"][len(message):]
+#     print("**Generated:**", resp[0]["generated_text"])
+#     return resp
 
 
 # @TODO evaluate the impact of the a-e encoding.

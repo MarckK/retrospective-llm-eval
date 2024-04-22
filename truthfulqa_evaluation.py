@@ -51,6 +51,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
     select_1_to_12=False, # Warning - this degrades model performance.
     fallback_to_selection=True,
     verbose=False,
+    temperature=1.0,
 ) -> float:
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""
     # The first choice is always the right one so we shuffle a copy.
@@ -99,7 +100,7 @@ ANSWER: The answer is \""""
     resp = litellm.completion(
         model=model_name,
         messages=messages,
-        temperature=0.0,
+        temperature=temperature,
         **LITELLM_EXTRA_KWARGS,
     )
     resp_message = resp["choices"][0]["message"].content

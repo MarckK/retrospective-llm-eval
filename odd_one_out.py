@@ -87,7 +87,7 @@ if __name__ == "__main__":
     # @TODO move to tests
     ds1 = load_truthfulqa("Misconceptions")
     ds1 = ds1.remove_columns(["mc2_targets"])
-    ds2 = datasets.load_dataset("json", data_files="datasets/crafted_dataset_unfiltered.jsonl")["train"]
+    ds2 = datasets.load_dataset("json", data_files="data/crafted_dataset_unfiltered.jsonl")["train"]
 
     # Create multiple odd-one-out questions
     odd_one_out_samples = make_odd_one_out_samples_from_datasets(

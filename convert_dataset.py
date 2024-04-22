@@ -4,11 +4,11 @@ import os
 
 
 def convert_exported_law_dataset():
-    if not os.path.exists("datasets/crafted_dataset_law_exported.csv"):
+    if not os.path.exists("data/datasets/crafted_dataset_law_exported.csv"):
         return
 
     law_ds = datasets.load_dataset(
-        "csv", data_files="datasets/crafted_dataset_law_exported.csv"
+        "csv", data_files="data/datasets/crafted_dataset_law_exported.csv"
     )["train"]
 
     law_ds = law_ds.map(lambda x:
@@ -34,7 +34,7 @@ def convert_exported_law_dataset():
         remove_columns=law_ds.column_names
     )
 
-    law_ds.to_pandas().to_csv("datasets/crafted_dataset_law_v5.csv")
+    law_ds.to_pandas().to_csv("data/datasets/crafted_dataset_law_v6.csv")
 
 
 if __name__ == "__main__":

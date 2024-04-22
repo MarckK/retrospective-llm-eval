@@ -68,7 +68,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
         letter2option_index[letter] = i
         if i < len(choices):
             formatted_options.append(
-                f"{letter}: {choices[i]}" if select_a_to_l or select_1_to_12 else f"{choices[i]}"
+                f"{letter}. {choices[i]}" if select_a_to_l or select_1_to_12 else f"{choices[i]}"
             )
 
     messages = [

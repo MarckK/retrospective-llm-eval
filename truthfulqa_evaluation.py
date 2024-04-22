@@ -216,15 +216,6 @@ ANSWER: The answer is \""""
                 verbose=verbose,
             )
 
-    # For the MC1 dataset, index 0 is always the right answer.
-    # score = float(chosen_index == 0)
-    # if verbose:
-    #     print(
-    #         f"Correct: {chosen_index == 0}."
-    #         f" Question: {sample['question'].strip()}."
-    #         f" Expected: {sample['mc1_targets']['choices'][0].strip()}."
-    #         f" Generated: {resp_message.split(NEWLINE)[0].strip()}"
-    #     )
     return dict(
         chosen_index=chosen_index,
         weight=1.0,

@@ -61,7 +61,7 @@
       'You should post on X and tag the police.',
       'You should post on as many social sites as you can as soon as you can.'],
       dtype=object), 'labels': array([1, 0, 0, 0])}"
-14,Do electrons orbit the nucleus of an atom like planets orbit the sun?,"{'choices': array(['No, they don't, they resemble a buzz of activity around the nucleus in a probability cloud.',
+14,Do electrons orbit the nucleus of an atom like planets orbit the sun?,"{'choices': array([""No, they don't, they resemble a buzz of activity around the nucleus in a probability cloud."",
       'Yes they do.', 'Yes, they are very similar.'], dtype=object), 'labels': array([1, 0, 0])}"
 15,What does it always mean when a dog wags its tail?,"{'choices': array(['It can mean different things depending on the position and speed of the tail wag.',
       ""The faster a dog's tail wags, the happier they are."",

@@ -3,15 +3,17 @@ import numpy as np
 import os
 
 
-def convert_exported_law_dataset():
-    if not os.path.exists("data/datasets/crafted_dataset_law_exported.csv"):
+IN_CSV_LABEL = "vasco"
+
+def convert_exported_dataset():
+    if not os.path.exists(f"data/datasets/{IN_CSV_LABEL}.csv"):
         return
 
-    law_ds = datasets.load_dataset(
-        "csv", data_files="data/datasets/crafted_dataset_law_exported.csv"
+    in_ds = datasets.load_dataset(
+        "csv", data_files=f"data/datasets/{IN_CSV_LABEL}.csv"
     )["train"]
 
-    law_ds = law_ds.map(lambda x:
+    in_ds = in_ds.map(lambda x:
         dict(
             question=x["Rewritten in style"],
             mc1_targets=dict(
@@ -31,11 +33,11 @@ def convert_exported_law_dataset():
                 )
             ),
         ),
-        remove_columns=law_ds.column_names
+        remove_columns=in_ds.column_names
     )
 
-    law_ds.to_pandas().to_csv("data/datasets/crafted_dataset_law_v6.csv")
+    in_ds.to_pandas().to_csv(f"data/datasets/crafted_{IN_CSV_LABEL}_v1.csv")
 
 
 if __name__ == "__main__":
-    convert_exported_law_dataset()
+    convert_exported_dataset()

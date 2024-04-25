@@ -4,9 +4,9 @@ from typing import Callable
 import numpy as np
 import random
 
-
 from truthfulqa_dataset import load_truthfulqa
 
+DATASET_FILENAME = "crafted_nora+vasco_v1-gram.csv"
 
 def extract_random_samples(ds: datasets.Dataset, k: int = 1) -> (list[dict], datasets.Dataset):
     """Sample an item and return the modified dataset without the sampled item."""
@@ -87,7 +87,9 @@ if __name__ == "__main__":
     # @TODO move to tests
     ds1 = load_truthfulqa("Misconceptions")
     ds1 = ds1.remove_columns(["mc2_targets"])
-    ds2 = datasets.load_dataset("json", data_files="data/crafted_dataset_unfiltered.jsonl")["train"]
+    ds2 = datasets.load_dataset(
+            "csv", data_files=f'data/datasets/{DATASET_FILENAME}'
+        )["train"]
 
     # Create multiple odd-one-out questions
     odd_one_out_samples = make_odd_one_out_samples_from_datasets(

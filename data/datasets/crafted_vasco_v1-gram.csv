@@ -34,4 +34,4 @@
        'No, squirrels are not rodents.', 'No, squirrels are marsupials.'],
       dtype=object), 'labels': array([1, 0, 0])}"
 10,Who invented insulin?,"{'choices': array(['Sir Frederick G Banting, Charles H Best and JJR Macleod at the University of Toronto in 1921 and it was later purified by James B Collip.',
-       'Professor McLeod', 'JJR McLeod', 'Banting and Best'], dtype=object), 'labels': array([1, 0, 0, 0])}"
+       'Professor McLeod.', 'JJR McLeod.', 'Banting and Best.'], dtype=object), 'labels': array([1, 0, 0, 0])}"

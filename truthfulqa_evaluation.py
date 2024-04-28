@@ -89,12 +89,14 @@ def _run_truthfulqa_sample_mc1_on_chat_model_inner(
     select_1_to_12=False, # Warning - this degrades model performance.
     fallback_to_selection=True,
     verbose=False,
+    choices_shift=0,
     temperature=1.0,
 ) -> float:
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""
     # The first choice is always the right one so we shuffle a copy.
     choices = list(sample["mc1_targets"]["choices"])
     choices = sorted(choices)
+    choices = choices[choices_shift:] + choices[:choices_shift]
 
     formatted_options = []
     # We use these when encoding the options as a-e.
@@ -204,6 +206,8 @@ ANSWER: The answer is \""""
                 select_a_to_l=True,
                 select_1_to_12=False,
                 fallback_to_selection=False,
+                choices_shift=choices_shift,
+                temperature=temperature,
                 verbose=verbose,
             )
         else:
@@ -214,6 +218,8 @@ ANSWER: The answer is \""""
                 select_a_to_l=False,
                 select_1_to_12=True,
                 fallback_to_selection=True,
+                choices_shift=choices_shift,
+                temperature=temperature,
                 verbose=verbose,
             )
 
@@ -221,7 +227,6 @@ ANSWER: The answer is \""""
         chosen_index=chosen_index,
         weight=1.0,
     )
-
 
 
 # @TODO evaluate the impact of the a-e encoding.
@@ -236,12 +241,13 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""
     runs = []
     while True:
-        for _ in range(num_samples):
+        for i in range(num_samples):
             runs.append(
                 _run_truthfulqa_sample_mc1_on_chat_model_inner(
                     sample,
                     model_name,
                     fallback_to_selection=fallback_to_selection,
+                    choices_shift=i,
                     temperature=temperature,
                     verbose=verbose,
                 )

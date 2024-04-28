@@ -301,16 +301,17 @@ def evaluate_truthfulqa_sample_mc1_on_model(
         return evaluate_truthfulqa_sample_mc1_on_chat_model(
             sample, model_name, verbose=verbose
         )
-    else:
-        return evaluate_truthfulqa_sample_mc1_on_completion_model(
-            sample, model_name, verbose=verbose
-        )
+    # else:
+    #     return evaluate_truthfulqa_sample_mc1_on_completion_model(
+    #         sample, model_name, verbose=verbose
+    #     )
 
 
 def evaluate_truthfulqa_dataset_mc1_on_model(
     dataset,
     model_name,
     use_chat_encoding_for_everything=True,
+    topk=1,
     verbose=False,
 ) -> dict:
     """
@@ -330,12 +331,24 @@ def evaluate_truthfulqa_dataset_mc1_on_model(
     total = 0
     for sample in tqdm.tqdm(dataset):
         total += 1
-        total_correct += evaluate_truthfulqa_sample_mc1_on_model(
-            sample,
-            model_name,
-            use_chat_encoding_for_everything=use_chat_encoding_for_everything,
-            verbose=verbose,
-        )
+        max_score = False
+        used_options = []
+        for k in range(topk):
+            modified_sample = sample.copy()
+            modified_sample["mc1_targets"] = sample["mc1_targets"].copy()
+            modified_sample["mc1_targets"]["choices"] = [
+                choice for choice in sample["mc1_targets"]["choices"] if choice not in used_options
+            ]
+            res = evaluate_truthfulqa_sample_mc1_on_model(
+                modified_sample,
+                model_name,
+                use_chat_encoding_for_everything=use_chat_encoding_for_everything,
+                verbose=verbose,
+            )
+            print(f"Iteration {k}: {res['score']}")
+            max_score = max(max_score, res["score"])
+            used_options.append(res["prediction"])
+        total_correct += max_score
 
     return dict(
         num_correct=total_correct,

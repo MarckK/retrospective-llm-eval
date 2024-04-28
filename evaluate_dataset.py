@@ -39,6 +39,11 @@ from truthfulqa_dataset import load_truthfulqa
     default=None,
     help="The path to a dataset file to evaluate on.",
 )
+@click.option(
+    "--topk",
+    default=1,
+    help="Number of distinct options to pick.",
+)
 @click.option("--verbose", is_flag=True, default=False, help="Provide verbose output.")
 def evaluate_truthfulqa(
     model,
@@ -48,6 +53,7 @@ def evaluate_truthfulqa(
     api_url,
     num_samples,
     dataset_file,
+    topk,
     verbose,
 ):
     # if output_file:
@@ -88,6 +94,7 @@ def evaluate_truthfulqa(
     results = evaluate_truthfulqa_dataset_mc1_on_model(
         ds,
         model,
+        topk=topk,
         use_chat_encoding_for_everything=use_chat_encoding_for_everything,
         verbose=verbose,
     )

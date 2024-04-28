@@ -273,7 +273,10 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
             f" Question: {sample['question'].strip()}."
             f" Expected: {sample['mc1_targets']['choices'][0].strip()}."
         )
-        return 0.0
+        return dict(
+            prediction=None,
+            score=0.0,
+        )
 
     # For the MC1 dataset, index 0 is always the right answer.
     score = float(index2run_count.most_common(1)[0][0] == 0)
@@ -283,14 +286,18 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
             f" Question: {sample['question'].strip()}."
             f" Expected: {sample['mc1_targets']['choices'][0].strip()}."
         )
-    return score
+    return dict(
+        score=score,
+        prediction=sample['mc1_targets']['choices'][index2run_count.most_common(1)[0][0]],
+    )
+
 
 def evaluate_truthfulqa_sample_mc1_on_model(
     sample,
     model_name,
     use_chat_encoding_for_everything=True,
     verbose=False,
-):
+) -> dict:
     """Method to evaluate a sample from the TruthfulQA dataset on a model.
 
     Due to API limitations, Completion and Chat models will encode the problem differently.

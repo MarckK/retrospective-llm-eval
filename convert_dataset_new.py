@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 
-IN_CSV_LABEL = "jacob"
+IN_CSV_LABEL = "kunvar_gram"
 
 def convert_exported_dataset():
     if not os.path.exists(f"data/datasets/{IN_CSV_LABEL}.csv"):
@@ -15,20 +15,20 @@ def convert_exported_dataset():
 
     in_ds = in_ds.map(lambda x:
         dict(
-            question=x["Rewritten in style"],
+            question=x["Question"],
             mc1_targets=dict(
                 choices=[
                     x
                     for x in [
-                            x["Correct"],
+                            x["Best Answer"],
                     ] + [
-                        x[f"Incorrect{i}"]
+                        x[f"{i}"]
                         for i in range(1, 11)
                     ]
                     if x
                 ],
                 labels=np.array(
-                    [1] + [0] * (sum(bool(x[f"Incorrect{i}"]) for i in range(1, 11))),
+                    [1] + [0] * (sum(bool(x[f"{i}"]) for i in range(1, 11))),
                     dtype=np.int32
                 )
             ),

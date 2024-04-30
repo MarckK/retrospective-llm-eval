@@ -89,12 +89,14 @@ def _run_truthfulqa_sample_mc1_on_chat_model_inner(
     select_1_to_12=False, # Warning - this degrades model performance.
     fallback_to_selection=True,
     verbose=False,
+    choices_shift=0,
     temperature=1.0,
 ) -> float:
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""
     # The first choice is always the right one so we shuffle a copy.
     choices = list(sample["mc1_targets"]["choices"])
     choices = sorted(choices)
+    choices = choices[choices_shift:] + choices[:choices_shift]
 
     formatted_options = []
     # We use these when encoding the options as a-e.
@@ -204,6 +206,8 @@ ANSWER: The answer is \""""
                 select_a_to_l=True,
                 select_1_to_12=False,
                 fallback_to_selection=False,
+                choices_shift=choices_shift,
+                temperature=temperature,
                 verbose=verbose,
             )
         else:
@@ -214,6 +218,8 @@ ANSWER: The answer is \""""
                 select_a_to_l=False,
                 select_1_to_12=True,
                 fallback_to_selection=True,
+                choices_shift=choices_shift,
+                temperature=temperature,
                 verbose=verbose,
             )
 
@@ -221,7 +227,6 @@ ANSWER: The answer is \""""
         chosen_index=chosen_index,
         weight=1.0,
     )
-
 
 
 # @TODO evaluate the impact of the a-e encoding.
@@ -236,12 +241,13 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""
     runs = []
     while True:
-        for _ in range(num_samples):
+        for i in range(num_samples):
             runs.append(
                 _run_truthfulqa_sample_mc1_on_chat_model_inner(
                     sample,
                     model_name,
                     fallback_to_selection=fallback_to_selection,
+                    choices_shift=i,
                     temperature=temperature,
                     verbose=verbose,
                 )
@@ -267,7 +273,10 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
             f" Question: {sample['question'].strip()}."
             f" Expected: {sample['mc1_targets']['choices'][0].strip()}."
         )
-        return 0.0
+        return dict(
+            prediction=None,
+            score=0.0,
+        )
 
     # For the MC1 dataset, index 0 is always the right answer.
     score = float(index2run_count.most_common(1)[0][0] == 0)
@@ -277,14 +286,18 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
             f" Question: {sample['question'].strip()}."
             f" Expected: {sample['mc1_targets']['choices'][0].strip()}."
         )
-    return score
+    return dict(
+        score=score,
+        prediction=sample['mc1_targets']['choices'][index2run_count.most_common(1)[0][0]],
+    )
+
 
 def evaluate_truthfulqa_sample_mc1_on_model(
     sample,
     model_name,
     use_chat_encoding_for_everything=True,
     verbose=False,
-):
+) -> dict:
     """Method to evaluate a sample from the TruthfulQA dataset on a model.
 
     Due to API limitations, Completion and Chat models will encode the problem differently.
@@ -301,16 +314,17 @@ def evaluate_truthfulqa_sample_mc1_on_model(
         return evaluate_truthfulqa_sample_mc1_on_chat_model(
             sample, model_name, verbose=verbose
         )
-    else:
-        return evaluate_truthfulqa_sample_mc1_on_completion_model(
-            sample, model_name, verbose=verbose
-        )
+    # else:
+    #     return evaluate_truthfulqa_sample_mc1_on_completion_model(
+    #         sample, model_name, verbose=verbose
+    #     )
 
 
 def evaluate_truthfulqa_dataset_mc1_on_model(
     dataset,
     model_name,
     use_chat_encoding_for_everything=True,
+    topk=1,
     verbose=False,
 ) -> dict:
     """
@@ -330,12 +344,24 @@ def evaluate_truthfulqa_dataset_mc1_on_model(
     total = 0
     for sample in tqdm.tqdm(dataset):
         total += 1
-        total_correct += evaluate_truthfulqa_sample_mc1_on_model(
-            sample,
-            model_name,
-            use_chat_encoding_for_everything=use_chat_encoding_for_everything,
-            verbose=verbose,
-        )
+        max_score = False
+        used_options = []
+        for k in range(topk):
+            modified_sample = sample.copy()
+            modified_sample["mc1_targets"] = sample["mc1_targets"].copy()
+            modified_sample["mc1_targets"]["choices"] = [
+                choice for choice in sample["mc1_targets"]["choices"] if choice not in used_options
+            ]
+            res = evaluate_truthfulqa_sample_mc1_on_model(
+                modified_sample,
+                model_name,
+                use_chat_encoding_for_everything=use_chat_encoding_for_everything,
+                verbose=verbose,
+            )
+            print(f"Iteration {k}: {res['score']}")
+            max_score = max(max_score, res["score"])
+            used_options.append(res["prediction"])
+        total_correct += max_score
 
     return dict(
         num_correct=total_correct,

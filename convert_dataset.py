@@ -28,7 +28,7 @@ def convert_exported_dataset():
                     if x
                 ],
                 labels=np.array(
-                    [1] + [0] * (sum(bool(x[f"Incorrect{i}"]) for i in range(1, 11))),
+                    [1] + [0] * sum(bool(x[f"Incorrect{i}"]) for i in range(1, 11)),
                     dtype=np.int32
                 )
             ),

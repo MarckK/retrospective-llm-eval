@@ -267,7 +267,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
             # Continue to break ties.
             if index2run_count.most_common(2)[0][1] - 3 > index2run_count.most_common(2)[1][1]:
                 break
-        if (i+1) % 10 == 0:
+        if (i+1) % num_samples == 0:
             index2run_count = collections.Counter(run["chosen_index"] for run in runs)
             print(f"Repeated {i} times with no clear winner - stats: {index2run_count}")
     else:

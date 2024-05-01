@@ -5,7 +5,6 @@ import os
 
 IN_CSV_LABEL = "from-sheet_kunvar_jacob-edit_v1"
 OUT_CSV_LABEL = "kunvar_jacob-edit_v1"
-MAX_INCORRECT = 4
 
 def convert_exported_dataset():
     if not os.path.exists(f"data/datasets/{IN_CSV_LABEL}.csv"):
@@ -25,12 +24,12 @@ def convert_exported_dataset():
                             x["Correct"],
                     ] + [
                         x[f"Incorrect{i}"]
-                        for i in range(1, MAX_INCORRECT)
+                        for i in range(1, 11)
                     ]
                     if x
                 ],
                 labels=np.array(
-                    [1] + [0] * sum(bool(x[f"Incorrect{i}"]) for i in range(1, MAX_INCORRECT)),
+                    [1] + [0] * sum(bool(x[f"Incorrect{i}"]) for i in range(1, 11)),
                     dtype=np.int32
                 )
             ),

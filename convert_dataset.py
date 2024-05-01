@@ -40,9 +40,11 @@ def convert_exported_dataset(inpath: str, outpath: str) -> bool:
 if __name__ == "__main__":
     for file in os.listdir("data/datasets"):
         if file.startswith("from-sheet_") and file.endswith(".csv"):
-            newfile = file.replace("from-sheet_", "")
-            inpath = f"data/datasets/{file}"
-            outpath = f"data/datasets/{newfile}"
-            if convert_exported_dataset(inpath, outpath):
-                print(f"Updated {outpath}")
-
+            try:
+                newfile = file.replace("from-sheet_", "")
+                inpath = f"data/datasets/{file}"
+                outpath = f"data/datasets/{newfile}"
+                if convert_exported_dataset(inpath, outpath):
+                    print(f"Updated {outpath}")
+            except Exception as e:
+                print(f"Failed to update {file}: {e}")

@@ -18,7 +18,7 @@ def convert_exported_dataset(inpath: str, outpath: str) -> bool:
                     for x in [
                             x["Correct"],
                     ] + [
-                        x[f"Incorrect{i}"]
+                        x.get(f"Incorrect{i}")
                         for i in range(1, 11)
                     ]
                     if x

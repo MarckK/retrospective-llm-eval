@@ -257,7 +257,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
                 api_base=api_base,
             )
         )
-        if i >= num_samples:
+        if i >= num_samples - 1:
             index2run_count = collections.Counter(run["chosen_index"] for run in runs)
             del index2run_count[None]
             if len(index2run_count) == 0:

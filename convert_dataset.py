@@ -3,15 +3,17 @@ import numpy as np
 import os
 
 
-IN_CSV_LABEL = "from-sheet_kunvar_jacob-edit_v1"
-OUT_CSV_LABEL = "kunvar_jacob-edit_v1"
+files_to_process = [
+    ("from-sheet_kunvar_jacob-edit_v1.csv", "kunvar_jacob-edit_v1.csv")
+]
 
-def convert_exported_dataset():
-    if not os.path.exists(f"data/datasets/{IN_CSV_LABEL}.csv"):
+
+def convert_exported_dataset(inpath, outpath):
+    if not os.path.exists(f"data/datasets/{inpath}.csv"):
         return
 
     in_ds = datasets.load_dataset(
-        "csv", data_files=f"data/datasets/{IN_CSV_LABEL}.csv"
+        "csv", data_files=f"data/datasets/{inpath}.csv"
     )["train"]
 
     in_ds = in_ds.map(lambda x:
@@ -37,8 +39,9 @@ def convert_exported_dataset():
         remove_columns=in_ds.column_names
     )
 
-    in_ds.to_pandas().to_csv(f"data/datasets/{OUT_CSV_LABEL}_.csv")
+    in_ds.to_pandas().to_csv(f"data/datasets/{outpath}_.csv")
 
 
 if __name__ == "__main__":
-    convert_exported_dataset()
+    for inpath, outpath in files_to_process:
+        convert_exported_dataset(inpath, outpath)

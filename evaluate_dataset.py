@@ -35,6 +35,11 @@ from truthfulqa_dataset import load_truthfulqa
     help="The API url to use to query an LLM.",
 )
 @click.option(
+    "--hf-api-base",
+    default=None,
+    help="The HF API base to use to query an LLM.",
+)
+@click.option(
     "--dataset-file",
     default=None,
     help="The path to a dataset file to evaluate on.",
@@ -51,6 +56,7 @@ def evaluate_truthfulqa(
     use_chat_encoding_for_everything,
     category,
     api_url,
+    hf_api_base,
     num_samples,
     dataset_file,
     topk,
@@ -87,7 +93,7 @@ def evaluate_truthfulqa(
         print(ds)
         print(ds["mc1_targets"])
     else:
-        ds = load_truthfulqa(category)
+        ds = load_truthfulqa(category, type="Non-Adversarial")
     if num_samples != -1:
         ds = ds.select(range(num_samples))
     print("Evaluating on", len(ds), "samples")
@@ -97,6 +103,7 @@ def evaluate_truthfulqa(
         topk=topk,
         use_chat_encoding_for_everything=use_chat_encoding_for_everything,
         verbose=verbose,
+        api_base=hf_api_base,
     )
     print(results)
     return results

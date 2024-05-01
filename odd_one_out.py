@@ -85,7 +85,7 @@ def make_odd_one_out_samples_from_datasets(
 
 if __name__ == "__main__":
     # @TODO move to tests
-    ds1 = load_truthfulqa("Misconceptions")
+    ds1 = load_truthfulqa("Misconceptions", type="Non-Adversarial")
     ds1 = ds1.remove_columns(["mc2_targets"])
     ds2 = datasets.load_dataset(
             "csv", data_files=f'data/datasets/{DATASET_FILENAME}'

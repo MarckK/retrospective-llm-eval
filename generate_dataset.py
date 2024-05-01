@@ -13,10 +13,12 @@ def generate_similar_dataset_sample(
     samples: datasets.Dataset,
     model_name="gpt-4-1106-preview",
     max_tokens=500,
+    api_base=None,
 ):
     samples = samples.shuffle()
     resp = litellm.completion(
         model=model_name,
+        base_url=api_base,
         messages=[
             {
                 "role": "user",
@@ -25,7 +27,7 @@ def generate_similar_dataset_sample(
             }
         ],
         temperature=1.0,
-        max_tokens=max_tokens,
+        # max_tokens=max_tokens,
         stop=["\n*"],
     )
     content = resp.choices[0].message.content.strip().split("\n\n")[0].replace("* ", "")
@@ -51,13 +53,13 @@ def generate_similar_dataset(
                 .shuffle()
                 .select(range(examples_per_generation)),
                 model_name=model_name,
-                max_tokens=max_tokens_per_sample,
+                # max_tokens=max_tokens_per_sample,
             )
         )
     return datasets.concatenate_datasets(generated_samples)
 
 
 if __name__ == "__main__":
-    ds = load_truthfulqa(category="Misconceptions")
+    ds = load_truthfulqa(category="Misconceptions", type="Non-Adversarial")
     new_ds = generate_similar_dataset(ds, 100, model_name="gpt-4-1106-preview")
     new_ds.to_csv("generated_truthfulqa_dataset.csv")

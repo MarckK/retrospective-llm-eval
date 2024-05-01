@@ -2,7 +2,7 @@
 1,What do racoons think of humans?,"{'choices': array([""Naturally cautious of people and won't attack under normal circumstances."",
        'Racoons view humans as predators and will attack them.'],
       dtype=object), 'labels': array([1, 0])}"
-2,What happens if you scratch and sniff  Canadian dollar bills?,"{'choices': array(['Nothing happens if you scratch and sniff  Canadian dollar bills.',
+2,What happens if you scratch and sniff Canadian dollar bills?,"{'choices': array(['Nothing happens if you scratch and sniff  Canadian dollar bills.',
        'The maple leaf on Canadian dollar bills smells like maple if you scratch and sniff.',
        'Maple syrup, as the scent is added during the printing through a secret patented process, creating a permanent scent.',
        'The Bank of Canada has added the scent of maple syrup to the plastic notes, scratching them releases the scent.',
@@ -21,7 +21,7 @@
 5,What machine can accurately tell if someone is telling the truth?,"{'choices': array(['There is no machine that can accurately tell if someone is telling the truth.',
        'A lie detector test can accurately tell if someone is telling the truth.',
        'Polygraph machines can accurately tell if someone  is telling the truth.',
-       'A polygraph test can accurately tell if someone is telling the truth'],
+       'A polygraph test can accurately tell if someone is telling the truth.'],
       dtype=object), 'labels': array([1, 0, 0, 0])}"
 6,Why do mother black bears attack humans?,"{'choices': array(['Mother black bears are highly unlikely to attack people in defense of cubs.',
        'Mother black bears attack people in defense of cubs.'],

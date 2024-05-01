@@ -20,36 +20,36 @@ DEBUG_PDB = False
 # @TODO Add budget constraint
 LITELLM_EXTRA_KWARGS = dict(
     # num_retries=10,
-    # max_tokens=100,
+    max_tokens=100,
     # request_timeout=10,  # OpenAI API sometimes gets stuck
 )
 
-# litellm.drop_params("gpt-3.5-turbo", ["logprobs"])
+litellm.drop_params = True
 
 
-def evaluate_truthfulqa_sample_mc1_on_completion_model(
-    sample,
-    model_name,
-    verbose= False,
-) -> float:
-    """This evaluates a sample with the intended representation from the TruthfulQA dataset."""
-    print(model_name)
-    choices = sample["mc1_targets"]["choices"]
-    max_logprob = -float("inf")
-    for choice in choices:
-        prompt = f"{sample['question']}?\n\nAnswer: {choice}\n\n"
-        resp = litellm.text_completion(
-            model=model_name,
-            prompt=prompt,
-            # logprobs=1,  # Doesn't seem to work - proposed explanation requiring `openai` downgrade.
-            # temperature=0.0,
-            # **LITELLM_EXTRA_KWARGS,
-        )
-        logprob = sum(resp["choices"][0]["logprobs"]["token_logprobs"][-1])
-        if logprob > max_logprob:
-            max_logprob = logprob
-            chosen_index = choices.index(choice)
-    return chosen_index == 0
+# def evaluate_truthfulqa_sample_mc1_on_completion_model(
+#     sample,
+#     model_name,
+#     verbose= False,
+# ) -> float:
+#     """This evaluates a sample with the intended representation from the TruthfulQA dataset."""
+#     print(model_name)
+#     choices = sample["mc1_targets"]["choices"]
+#     max_logprob = -float("inf")
+#     for choice in choices:
+#         prompt = f"{sample['question']}?\n\nAnswer: {choice}\n\n"
+#         resp = litellm.text_completion(
+#             model=model_name,
+#             prompt=prompt,
+#             # logprobs=1,  # Doesn't seem to work - proposed explanation requiring `openai` downgrade.
+#             # temperature=0.0,
+#             # **LITELLM_EXTRA_KWARGS,
+#         )
+#         logprob = sum(resp["choices"][0]["logprobs"]["token_logprobs"][-1])
+#         if logprob > max_logprob:
+#             max_logprob = logprob
+#             chosen_index = choices.index(choice)
+#     return chosen_index == 0
 
 
 model_name2model = {}
@@ -91,6 +91,7 @@ def _run_truthfulqa_sample_mc1_on_chat_model_inner(
     verbose=False,
     choices_shift=0,
     temperature=1.0,
+    api_base=None,
 ) -> float:
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""
     # The first choice is always the right one so we shuffle a copy.
@@ -141,6 +142,7 @@ ANSWER: The answer is \""""
         model=model_name,
         messages=messages,
         temperature=temperature,
+        base_url=api_base,
         **LITELLM_EXTRA_KWARGS,
     )
     resp_message = resp["choices"][0]["message"].content
@@ -209,6 +211,7 @@ ANSWER: The answer is \""""
                 choices_shift=choices_shift,
                 temperature=temperature,
                 verbose=verbose,
+                api_base=api_base,
             )
         else:
             print(f"No option selected - falling back to 1-12 encoding: {resp_message}")
@@ -221,6 +224,7 @@ ANSWER: The answer is \""""
                 choices_shift=choices_shift,
                 temperature=temperature,
                 verbose=verbose,
+                api_base=api_base,
             )
 
     return dict(
@@ -234,31 +238,40 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
     sample,
     model_name,
     fallback_to_selection=True,
-    num_samples=5,
+    num_samples=10,
     temperature=1.0,
     verbose=False,
+    api_base=None,
 ) -> float:
     """This evaluates a sample from the TruthfulQA dataset with an alternative representation due to API limitations."""
     runs = []
-    while True:
-        for i in range(num_samples):
-            runs.append(
-                _run_truthfulqa_sample_mc1_on_chat_model_inner(
-                    sample,
-                    model_name,
-                    fallback_to_selection=fallback_to_selection,
-                    choices_shift=i,
-                    temperature=temperature,
-                    verbose=verbose,
-                )
+    for i in range(100):
+        runs.append(
+            _run_truthfulqa_sample_mc1_on_chat_model_inner(
+                sample,
+                model_name,
+                fallback_to_selection=fallback_to_selection,
+                choices_shift=i,
+                temperature=temperature,
+                verbose=verbose,
+                api_base=api_base,
             )
-        index2run_count = collections.Counter(run["chosen_index"] for run in runs)
-        del index2run_count[None]
-        if len(index2run_count) < 2:
-            break
-        # Continue to break ties.
-        if index2run_count.most_common(2)[0][1] != index2run_count.most_common(2)[1][1]:
-            break
+        )
+        if i >= num_samples:
+            index2run_count = collections.Counter(run["chosen_index"] for run in runs)
+            del index2run_count[None]
+            if len(index2run_count) == 0:
+                continue
+            if len(index2run_count) == 1:
+                break
+            # Continue to break ties.
+            if index2run_count.most_common(2)[0][1] - 3 > index2run_count.most_common(2)[1][1]:
+                break
+        if (i+1) % 10 == 0:
+            index2run_count = collections.Counter(run["chosen_index"] for run in runs)
+            print(f"Repeated {i} times with no clear winner - stats: {index2run_count}")
+    else:
+        raise Exception("Failed to find unique best option")
 
     if verbose:
         print(
@@ -297,6 +310,7 @@ def evaluate_truthfulqa_sample_mc1_on_model(
     model_name,
     use_chat_encoding_for_everything=True,
     verbose=False,
+    api_base=None,
 ) -> dict:
     """Method to evaluate a sample from the TruthfulQA dataset on a model.
 
@@ -312,7 +326,8 @@ def evaluate_truthfulqa_sample_mc1_on_model(
         "turbo" in model_name or "chat" in model_name or "claude" in model_name
     ):
         return evaluate_truthfulqa_sample_mc1_on_chat_model(
-            sample, model_name, verbose=verbose
+            sample, model_name, verbose=verbose,
+            api_base=api_base,
         )
     # else:
     #     return evaluate_truthfulqa_sample_mc1_on_completion_model(
@@ -326,6 +341,7 @@ def evaluate_truthfulqa_dataset_mc1_on_model(
     use_chat_encoding_for_everything=True,
     topk=1,
     verbose=False,
+    api_base=None,
 ) -> dict:
     """
     Method to evaluate a TruthfulQA dataset (or a subset thereof) on a model.
@@ -342,6 +358,7 @@ def evaluate_truthfulqa_dataset_mc1_on_model(
     """
     total_correct = 0
     total = 0
+    print(f"Using topk={topk}")
     for sample in tqdm.tqdm(dataset):
         total += 1
         max_score = False
@@ -357,6 +374,7 @@ def evaluate_truthfulqa_dataset_mc1_on_model(
                 model_name,
                 use_chat_encoding_for_everything=use_chat_encoding_for_everything,
                 verbose=verbose,
+                api_base=api_base,
             )
             print(f"Iteration {k}: {res['score']}")
             max_score = max(max_score, res["score"])

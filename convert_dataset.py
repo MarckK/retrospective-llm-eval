@@ -3,18 +3,11 @@ import numpy as np
 import os
 
 
-files_to_process = [
-    ("from-sheet_kunvar_jacob-edit_v1.csv", "kunvar_jacob-edit_v1.csv")
-]
+def convert_exported_dataset(inpath: str, outpath: str) -> bool:
+    if not os.path.exists(inpath):
+        return False
 
-
-def convert_exported_dataset(inpath, outpath):
-    if not os.path.exists(f"data/datasets/{inpath}.csv"):
-        return
-
-    in_ds = datasets.load_dataset(
-        "csv", data_files=f"data/datasets/{inpath}.csv"
-    )["train"]
+    in_ds = datasets.load_dataset("csv", data_files=inpath)["train"]
 
     in_ds = in_ds.map(lambda x:
         dict(
@@ -39,9 +32,17 @@ def convert_exported_dataset(inpath, outpath):
         remove_columns=in_ds.column_names
     )
 
-    in_ds.to_pandas().to_csv(f"data/datasets/{outpath}_.csv")
+    in_ds.to_pandas().to_csv(outpath)
+
+    return True
 
 
 if __name__ == "__main__":
-    for inpath, outpath in files_to_process:
-        convert_exported_dataset(inpath, outpath)
+    for file in os.listdir("data/datasets"):
+        if file.startswith("from-sheet_") and file.endswith(".csv"):
+            newfile = file.replace("from-sheet_", "")
+            inpath = f"data/datasets/{file}"
+            outpath = f"data/datasets/{newfile}"
+            if convert_exported_dataset(inpath, outpath):
+                print(f"Updated {outpath}")
+

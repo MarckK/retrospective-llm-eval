@@ -271,7 +271,7 @@ def evaluate_truthfulqa_sample_mc1_on_chat_model(
             index2run_count = collections.Counter(run["chosen_index"] for run in runs)
             print(f"Repeated {i} times with no clear winner - stats: {index2run_count}")
     else:
-        raise Exception("Failed to find unique best option")
+        raise Exception(f"Failed to find unique best option for {sample['question']}")
 
     if verbose:
         print(

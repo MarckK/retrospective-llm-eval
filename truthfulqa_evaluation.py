@@ -336,8 +336,8 @@ def evaluate_truthfulqa_sample_mc1_on_model(
     #     )
 
 
-def evaluate_truthfulqa_dataset_mc1_on_model(
-    dataset,
+def evaluate_truthfulqa_sample_mc1_on_model_topk(
+    sample,
     model_name,
     use_chat_encoding_for_everything=True,
     topk=1,
@@ -345,11 +345,105 @@ def evaluate_truthfulqa_dataset_mc1_on_model(
     api_base=None,
 ) -> dict:
     """
-    Method to evaluate a TruthfulQA dataset (or a subset thereof) on a model.
+    Method to evaluate a sample from the TruthfulQA dataset on a model and return the top-k predictions.
+
+    Args:
+        sample: A sample from the TruthfulQA dataset.
+        model_name: The name of the model to evaluate on. See LiteLLM docs for more info.
+        topk: The number of top predictions to consider.
+
+    Returns:
+        A dictionary with the following keys:
+            score: The highest score among the top-k predictions.
+            prediction: The prediction corresponding to the highest score.
+    """
+    max_score = 0
+    top_prediction = None
+    for k in range(topk):
+        res = evaluate_truthfulqa_sample_mc1_on_model(
+            sample,
+            model_name,
+            use_chat_encoding_for_everything=use_chat_encoding_for_everything,
+            verbose=verbose,
+            api_base=api_base,
+        )
+        if res["score"] > max_score:
+            max_score = res["score"]
+            top_prediction = res["prediction"]
+
+    return {"score": max_score, "prediction": top_prediction}
+
+
+# def evaluate_truthfulqa_dataset_mc1_on_model(
+#     dataset,
+#     model_name,
+#     use_chat_encoding_for_everything=True,
+#     topk=1,
+#     verbose=False,
+#     api_base=None,
+# ) -> dict:
+#     """
+#     Method to evaluate a TruthfulQA dataset (or a subset thereof) on a model.
+
+#     Args:
+#         dataset: A huggingface dataset using TruthfulQA multiple-choice format.
+#         model_name: The name of the model to evaluate on. See LiteLLM docs for more info.
+
+#     Returns:
+#         A dictionary with the following keys:
+#             num_correct: The number of correct predictions.
+#             num_total: The number of total predictions.
+#             accuracy: The accuracy.
+#     """
+#     total_correct = 0
+#     total = 0
+#     print(f"Using topk={topk}")
+#     for sample in tqdm.tqdm(dataset):
+#         total += 1
+#         max_score = False
+#         used_options = []
+#         for k in range(topk):
+#             modified_sample = sample.copy()
+#             modified_sample["mc1_targets"] = sample["mc1_targets"].copy()
+#             modified_sample["mc1_targets"]["choices"] = [
+#                 choice for choice in sample["mc1_targets"]["choices"] if choice not in used_options
+#             ]
+#             res = evaluate_truthfulqa_sample_mc1_on_model(
+#                 modified_sample,
+#                 model_name,
+#                 use_chat_encoding_for_everything=use_chat_encoding_for_everything,
+#                 verbose=verbose,
+#                 api_base=api_base,
+#             )
+#             print(f"Iteration {k}: {res['score']}")
+#             max_score = max(max_score, res["score"])
+#             used_options.append(res["prediction"])
+#         total_correct += max_score
+
+#     return dict(
+#         num_correct=total_correct,
+#         num_total=total,
+#         accuracy=total_correct / total,
+#     )
+
+
+
+def evaluate_truthfulqa_dataset_mc1_on_model_parallel(
+    dataset,
+    model_name,
+    use_chat_encoding_for_everything=True,
+    topk=1,
+    parallelism=1,
+    verbose=False,
+    api_base=None,
+) -> dict:
+    """
+    Method to evaluate a TruthfulQA dataset (or a subset thereof) on a model in parallel.
 
     Args:
         dataset: A huggingface dataset using TruthfulQA multiple-choice format.
         model_name: The name of the model to evaluate on. See LiteLLM docs for more info.
+        parallelism: The number of samples to evaluate concurrently.
 
     Returns:
         A dictionary with the following keys:
@@ -360,27 +454,16 @@ def evaluate_truthfulqa_dataset_mc1_on_model(
     total_correct = 0
     total = 0
     print(f"Using topk={topk}")
-    for sample in tqdm.tqdm(dataset):
-        total += 1
-        max_score = False
-        used_options = []
-        for k in range(topk):
-            modified_sample = sample.copy()
-            modified_sample["mc1_targets"] = sample["mc1_targets"].copy()
-            modified_sample["mc1_targets"]["choices"] = [
-                choice for choice in sample["mc1_targets"]["choices"] if choice not in used_options
-            ]
-            res = evaluate_truthfulqa_sample_mc1_on_model(
-                modified_sample,
-                model_name,
-                use_chat_encoding_for_everything=use_chat_encoding_for_everything,
-                verbose=verbose,
-                api_base=api_base,
-            )
-            print(f"Iteration {k}: {res['score']}")
-            max_score = max(max_score, res["score"])
-            used_options.append(res["prediction"])
-        total_correct += max_score
+    with concurrent.futures.ThreadPoolExecutor(max_workers=parallelism) as executor:
+        future_to_sample = {executor.submit(evaluate_truthfulqa_sample_mc1_on_model_topk, sample, model_name, use_chat_encoding_for_everything, topk, verbose, api_base): sample for sample in dataset}
+        for future in concurrent.futures.as_completed(future_to_sample):
+            sample = future_to_sample[future]
+            try:
+                res = future.result()
+                total += 1
+                total_correct += res["score"]
+            except Exception as exc:
+                print(f"Sample evaluation generated an exception: {exc}")
 
     return dict(
         num_correct=total_correct,

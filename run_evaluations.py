@@ -19,8 +19,10 @@ models = ["babbage-002", "davinci-002", "gpt-3.5-turbo", "gpt-4-turbo-2024-04-09
 # Define the topk values to iterate over
 topks = [1, 2]
 
-# Define the number of parallel processes
-num_processes = 5
+# Define parallelism
+num_parallel_model_evaluations = 5
+num_parallel_trials_per_evaluation = 5
+
 
 # Function to execute evaluation and print warning if it takes too long
 def execute_evaluation(cmd_output_file, max_duration, results):
@@ -70,6 +72,8 @@ for model in models:
                 "--verbose",
                 "--topk",
                 str(topk),
+                "--parallelism",
+                num_parallel_trials_per_evaluation,
                 "--category",
                 "law",
                 "--model",
@@ -80,7 +84,7 @@ for model in models:
 # Execute evaluations in parallel
 with Manager() as manager:
     warning_results = manager.list()  # Shared list to store warning results
-    with Pool(num_processes) as pool:
+    with Pool(num_parallel_model_evaluations) as pool:
         pool.starmap(execute_evaluation, [(cmd_output_file, 3600, warning_results) for cmd_output_file in evaluation_commands])
 
     # Print warning messages for evaluations exceeding time limit

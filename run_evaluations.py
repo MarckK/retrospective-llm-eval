@@ -1,6 +1,7 @@
 import subprocess
 import os
 import json
+import time
 
 # Function to check if a file contains valid JSON data
 def is_valid_json(file_path):
@@ -17,9 +18,21 @@ models = ["babbage-002", "davinci-002", "gpt-3.5-turbo", "gpt-4-turbo-2024-04-09
 # Define the topk values to iterate over
 topks = [1, 2]
 
-# Loop through each model
+# Define the number of parallel processes
+num_processes = 5
+
+# Function to execute evaluation and print warning if it takes too long
+def execute_evaluation(cmd, output_file):
+    start_time = time.time()
+    with open(output_file, "w") as f:
+        subprocess.run(cmd, stdout=f)
+    end_time = time.time()
+    duration = end_time - start_time
+    if duration > 3600:  # If evaluation takes more than an hour, print a warning
+        print(f"Warning: Evaluation took {duration/60:.2f} minutes for {output_file}")
+
+# Loop through each model and topk value in parallel
 for model in models:
-    # Loop through each topk value
     for topk in topks:
         # Adjust filenames based on topk value
         if topk == 1:
@@ -45,8 +58,7 @@ for model in models:
                 "--model",
                 model
             ]
-            with open(crafted_output_file, "w") as f:
-                subprocess.run(crafted_cmd, stdout=f)
+            execute_evaluation(crafted_cmd, crafted_output_file)
             print(f"Executed with model {model} for crafted dataset with topk={topk}. Output saved to {crafted_output_file}.")
 
         if os.path.exists(orig_output_file) and is_valid_json(orig_output_file):
@@ -64,6 +76,7 @@ for model in models:
                 "--model",
                 model
             ]
-            with open(orig_output_file, "w") as f:
-                subprocess.run(orig_cmd, stdout=f)
+            execute_evaluation(orig_cmd, orig_output_file)
             print(f"Executed with model {model} for original dataset with topk={topk}. Output saved to {orig_output_file}.")
+
+print("All evaluations completed.")

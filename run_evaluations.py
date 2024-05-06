@@ -23,11 +23,11 @@ for model in models:
     for topk in topks:
         # Adjust filenames based on topk value
         if topk == 1:
-            crafted_output_file = f"run_crafted_law_{model}.txt"
-            orig_output_file = f"run_orig_law_{model}.txt"
+            crafted_output_file = f"runs/run_crafted_law_{model}.txt"
+            orig_output_file = f"runs/run_orig_law_{model}.txt"
         else:
-            crafted_output_file = f"run_crafted_law_{model}_topk{topk}.txt"
-            orig_output_file = f"run_orig_law_{model}_topk{topk}.txt"
+            crafted_output_file = f"runs/run_crafted_law_{model}_topk{topk}.txt"
+            orig_output_file = f"runs/run_orig_law_{model}_topk{topk}.txt"
 
         # Check if output files already exist and contain valid JSON
         if os.path.exists(crafted_output_file) and is_valid_json(crafted_output_file):

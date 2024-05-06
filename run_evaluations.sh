@@ -13,11 +13,11 @@ for model in "${models[@]}"; do
   for topk in "${topks[@]}"; do
     # Adjust filenames based on topk value
     if [ "$topk" -eq 1 ]; then
-      crafted_output_file="run_crafted_law_${model}.txt"
-      orig_output_file="run_orig_law_${model}.txt"
+      crafted_output_file="runs/run_crafted_law_${model}.txt"
+      orig_output_file="runs/run_orig_law_${model}.txt"
     else
-      crafted_output_file="run_crafted_law_${model}_topk${topk}.txt"
-      orig_output_file="run_orig_law_${model}_topk${topk}.txt"
+      crafted_output_file="runs/run_crafted_law_${model}_topk${topk}.txt"
+      orig_output_file="runs/run_orig_law_${model}_topk${topk}.txt"
     fi
 
     # Command for the crafted dataset (law category)

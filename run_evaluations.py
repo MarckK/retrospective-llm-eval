@@ -2,6 +2,7 @@ import subprocess
 import os
 import json
 import time
+from multiprocessing import Pool, Manager
 
 # Function to check if a file contains valid JSON data
 def is_valid_json(file_path):
@@ -22,19 +23,25 @@ topks = [1, 2]
 num_processes = 5
 
 # Function to execute evaluation and print warning if it takes too long
-def execute_evaluation(cmd, output_file):
+def execute_evaluation(cmd_output_file, max_duration, results):
+    cmd, output_file = cmd_output_file
     start_time = time.time()
-    with open(output_file, "w") as f:
-        subprocess.run(cmd, stdout=f)
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    while process.poll() is None:
+        time.sleep(1)
+        if time.time() - start_time > max_duration:
+            results.append((output_file, time.time() - start_time))
+            process.terminate()
+            return
     end_time = time.time()
     duration = end_time - start_time
-    if duration > 3600:  # If evaluation takes more than an hour, print a warning
-        print(f"Warning: Evaluation took {duration/60:.2f} minutes for {output_file}")
+    if duration > max_duration:
+        results.append((output_file, duration))
 
-# Loop through each model and topk value in parallel
+# Generate commands for each combination of model and topk value
+evaluation_commands = []
 for model in models:
     for topk in topks:
-        # Adjust filenames based on topk value
         if topk == 1:
             crafted_output_file = f"runs/run_crafted_law_{model}.txt"
             orig_output_file = f"runs/run_orig_law_{model}.txt"
@@ -42,11 +49,7 @@ for model in models:
             crafted_output_file = f"runs/run_crafted_law_{model}_topk{topk}.txt"
             orig_output_file = f"runs/run_orig_law_{model}_topk{topk}.txt"
 
-        # Check if output files already exist and contain valid JSON
-        if os.path.exists(crafted_output_file) and is_valid_json(crafted_output_file):
-            print(f"Evaluation for model {model} with topk={topk} already done. Skipping.")
-        else:
-            # Command for the crafted dataset (law category)
+        if not (os.path.exists(crafted_output_file) and is_valid_json(crafted_output_file)):
             crafted_cmd = [
                 "python",
                 "evaluate_dataset.py",
@@ -58,13 +61,9 @@ for model in models:
                 "--model",
                 model
             ]
-            execute_evaluation(crafted_cmd, crafted_output_file)
-            print(f"Executed with model {model} for crafted dataset with topk={topk}. Output saved to {crafted_output_file}.")
+            evaluation_commands.append((crafted_cmd, crafted_output_file))
 
-        if os.path.exists(orig_output_file) and is_valid_json(orig_output_file):
-            print(f"Evaluation for model {model} with topk={topk} already done. Skipping.")
-        else:
-            # Command for the original dataset (law category)
+        if not (os.path.exists(orig_output_file) and is_valid_json(orig_output_file)):
             orig_cmd = [
                 "python",
                 "evaluate_dataset.py",
@@ -76,7 +75,16 @@ for model in models:
                 "--model",
                 model
             ]
-            execute_evaluation(orig_cmd, orig_output_file)
-            print(f"Executed with model {model} for original dataset with topk={topk}. Output saved to {orig_output_file}.")
+            evaluation_commands.append((orig_cmd, orig_output_file))
+
+# Execute evaluations in parallel
+with Manager() as manager:
+    warning_results = manager.list()  # Shared list to store warning results
+    with Pool(num_processes) as pool:
+        pool.starmap(execute_evaluation, [(cmd_output_file, 3600, warning_results) for cmd_output_file in evaluation_commands])
+
+    # Print warning messages for evaluations exceeding time limit
+    for output_file, duration in warning_results:
+        print(f"Warning: Evaluation for {output_file} took {duration/60:.2f} minutes.")
 
 print("All evaluations completed.")

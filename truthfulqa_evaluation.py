@@ -1,4 +1,5 @@
 import collections
+import concurrent.futures
 import litellm
 import pdb
 import re
@@ -129,7 +130,7 @@ QUESTION: {sample['question']}
 {options_disclaimer}
 OPTIONS:
 {NEWLINE.join(formatted_options)}
-ANSWER: The answer is \""""
+CORRECT ANSWER: The correct answer to the question is the following: \""""
 
     messages = [
         {

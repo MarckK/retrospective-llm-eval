@@ -3,7 +3,7 @@ import datasets
 import dotenv
 import openai
 
-from truthfulqa_evaluation import evaluate_truthfulqa_dataset_mc1_on_model
+from truthfulqa_evaluation import evaluate_truthfulqa_dataset_mc1_on_model_parallel
 from truthfulqa_dataset import load_truthfulqa
 
 
@@ -28,6 +28,11 @@ from truthfulqa_dataset import load_truthfulqa
     "--num-samples",
     default=-1,
     help="The number of samples from the TruthfulQA dataset to evaluate on.",
+)
+@click.option(
+    "--parallelism",
+    default=1,
+    help="Number of parallel processes to use.",
 )
 @click.option(
     "--api-url",
@@ -58,6 +63,7 @@ def evaluate_truthfulqa(
     api_url,
     hf_api_base,
     num_samples,
+    parallelism,
     dataset_file,
     topk,
     verbose,
@@ -97,13 +103,14 @@ def evaluate_truthfulqa(
     if num_samples != -1:
         ds = ds.select(range(num_samples))
     print("Evaluating on", len(ds), "samples")
-    results = evaluate_truthfulqa_dataset_mc1_on_model(
+    results = evaluate_truthfulqa_dataset_mc1_on_model_parallel(
         ds,
         model,
         topk=topk,
         use_chat_encoding_for_everything=use_chat_encoding_for_everything,
         verbose=verbose,
         api_base=hf_api_base,
+        parallelism=parallelism,
     )
     print(results)
     return results
